@@ -19,4 +19,16 @@ __pycache__/
 
 # Project specific
 *.txt
-!requirements.txt 
+!requirements.txt
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Test and coverage
+.coverage
+htmlcov/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/ 

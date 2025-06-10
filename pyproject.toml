@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "csv_report"
+version = "0.1.0"
+description = "Tiny CLI that loads a CSV, analyses it and optionally e-mails a report."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["pandas>=2.1"]
+
+[tool.setuptools]          # ❶ sagt: alle Pakete liegen unter src/
+package-dir = {"" = "src"}
+
+# Automatisches Auffinden der Packages
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]          # ❷ CLI-Eintrag
+csv_report = "csv_report.main:main"
