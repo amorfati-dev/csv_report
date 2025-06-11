@@ -57,11 +57,12 @@ def get_default_csv_path() -> Path:
 # Public API
 # ---------------------------------------------------------------------------
 
-def load_csv(source: Optional[str | Path] = None) -> pd.DataFrame:
+def load_csv(source: Optional[str | Path] = None, required_columns: Optional[list[str]] = None) -> pd.DataFrame:
     """Load CSV data from a file or URL.
     
     Args:
         source: Path to CSV file or URL. If None, uses default S&P 500 file.
+        required_columns: List of columns to require. If None, use default. If empty list, skip check.
         
     Returns:
         DataFrame containing the CSV data.
@@ -77,7 +78,6 @@ def load_csv(source: Optional[str | Path] = None) -> pd.DataFrame:
         # Convert string to Path if needed
         if _is_url(source):
             source = _download_to_tmp(source)
-        # 2b) … sonst als lokaler Pfad interpretieren
         else:
             source = Path(source)
             
@@ -89,11 +89,15 @@ def load_csv(source: Optional[str | Path] = None) -> pd.DataFrame:
         df = pd.read_csv(source)
         
         # Validate required columns
-        required_columns = ['Symbol', 'Shortname', 'Marketcap', 'Sector']
-        missing_columns = [col for col in required_columns if col not in df.columns]
-        if missing_columns:
-            raise DataLoadError(f"Missing required columns: {', '.join(missing_columns)}")
-            
+        if required_columns is None:
+            required_columns_check = ['Symbol', 'Shortname', 'Marketcap', 'Sector']
+        else:
+            required_columns_check = required_columns
+        if required_columns_check:
+            missing_columns = [col for col in required_columns_check if col not in df.columns]
+            if missing_columns:
+                raise DataLoadError(f"Missing required columns: {', '.join(missing_columns)}")
+        
         return df
         
     except pd.errors.ParserError as e:
