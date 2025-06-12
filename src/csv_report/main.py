@@ -1,3 +1,4 @@
+"""Main entry point for the CSV report generator."""
 from __future__ import annotations
 
 import pandas as pd
@@ -5,6 +6,8 @@ from pathlib import Path
 import argparse
 import sys
 from csv_report.load import DataLoadError, load_csv, get_default_csv_path
+from csv_report.report.compute import compute_all_kpis
+from csv_report.report.generate import generate_report, save_report
 
 
 

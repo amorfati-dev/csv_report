@@ -1,21 +1,26 @@
-.venv/
-*.pyc
-
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
+
+# Virtual Environment
+.env
+.venv/
+env/
+venv/
+ENV/
 
 # IDE
 .vscode/
 .idea/
 
-# OS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
+# Testing and Coverage
+.coverage
+htmlcov/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
 
 # Project specific
 *.txt
@@ -26,9 +31,10 @@ build/
 dist/
 *.egg-info/
 
-# Test and coverage
-.coverage
-htmlcov/
-
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints/ 
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
