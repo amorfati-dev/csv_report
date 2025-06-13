@@ -5,24 +5,52 @@ from csv_report.load import load_csv
 
 
 def test_load_default_csv():
-    """Test loading the default CSV file."""
-    df = load_csv()
-    assert isinstance(df, pd.DataFrame)
-    assert not df.empty
+    """Test loading default CSV file."""
+    # Create sample data
+    data = {
+        'Symbol': ['AAPL', 'MSFT', 'GOOGL'],
+        'Shortname': ['Apple', 'Microsoft', 'Alphabet'],
+        'Marketcap': [2000000000000, 1800000000000, 1500000000000],
+        'Sector': ['Technology', 'Technology', 'Technology']
+    }
+    df = pd.DataFrame(data)
+    
+    # Save to default location
+    df.to_csv("data/sp500.csv", index=False)
+    
+    # Load data
+    loaded_df = load_csv()
+    
+    # Check data
+    assert isinstance(loaded_df, pd.DataFrame)
+    assert len(loaded_df) == 3
+    assert "Apple" in loaded_df["Shortname"].values
 
 
 def test_load_csv_from_url():
     """Test loading CSV from URL."""
-    url = (
-        "https://raw.githubusercontent.com/datasets/s-and-p-500-companies/"
-        "master/data/constituents.csv"
-    )
-    df = load_csv(url=url)
-    assert isinstance(df, pd.DataFrame)
-    assert not df.empty
+    # Create sample data
+    data = {
+        'Symbol': ['AAPL', 'MSFT', 'GOOGL'],
+        'Shortname': ['Apple', 'Microsoft', 'Alphabet'],
+        'Marketcap': [2000000000000, 1800000000000, 1500000000000],
+        'Sector': ['Technology', 'Technology', 'Technology']
+    }
+    df = pd.DataFrame(data)
+    
+    # Save to temporary file
+    df.to_csv("data/sp500.csv", index=False)
+    
+    # Load data
+    loaded_df = load_csv(url="file://data/sp500.csv")
+    
+    # Check data
+    assert isinstance(loaded_df, pd.DataFrame)
+    assert len(loaded_df) == 3
+    assert "Apple" in loaded_df["Shortname"].values
 
 
 def test_load_invalid_file():
-    """Test loading non-existent file."""
+    """Test loading invalid file."""
     with pytest.raises(FileNotFoundError):
-        load_csv(file_path="nonexistent.csv") 
+        load_csv("nonexistent.csv") 

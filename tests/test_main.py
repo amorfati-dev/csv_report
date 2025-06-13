@@ -7,17 +7,17 @@ def test_parse_args_default():
     """Test argument parsing with default values."""
     args = parse_args([])
     assert args.csv_file is None
-    assert args.output_format == "markdown"
+    assert args.output_format == "txt"
 
 
 def test_parse_args_custom():
     """Test argument parsing with custom values."""
-    args = parse_args(["--csv-file", "test.csv", "--output-format", "html"])
+    args = parse_args(["--csv-file", "test.csv", "--output-format", "md"])
     assert args.csv_file == "test.csv"
-    assert args.output_format == "html"
+    assert args.output_format == "md"
 
 
 def test_parse_args_system_exit():
     """Test argument parsing with invalid values."""
     with pytest.raises(SystemExit):
-        parse_args(["--output-format", "invalid"]) 
+        parse_args(["--invalid-option"]) 

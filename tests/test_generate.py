@@ -1,10 +1,11 @@
 """Tests for the generate module."""
-import pandas as pd
+import pytest
+from pathlib import Path
 from csv_report.report.generate import generate_report, save_report
 
 
 def test_generate_report():
-    """Test report generation from DataFrame."""
+    """Test report generation."""
     # Create sample data
     data = {
         'Symbol': ['AAPL', 'MSFT', 'GOOGL'],
@@ -13,37 +14,40 @@ def test_generate_report():
         'Sector': ['Technology', 'Technology', 'Technology']
     }
     df = pd.DataFrame(data)
-
+    
     # Generate report
     report = generate_report(df)
-
+    
     # Check report content
-    assert isinstance(report, str)
     assert "S&P 500 Analysis Report" in report
     assert "Apple" in report
     assert "Microsoft" in report
     assert "Alphabet" in report
 
 
-def test_save_report(tmp_path):
+def test_save_report():
     """Test saving report to file."""
-    # Create sample report content
-    report_content = "Test Report Content"
-
-    # Save report
-    report_path = tmp_path / "test_report.md"
-    saved_path = save_report(report_content, report_path)
+    # Create test report
+    report = "Test Report\n==========\n\nTest content."
     
-    assert saved_path == report_path
-    assert report_path.exists()
-    assert report_path.read_text() == "Test Report Content"
+    # Save report
+    output_file = save_report(report)
+    
+    # Check file exists and content
+    assert output_file.exists()
+    assert output_file.read_text() == report
+    
+    # Clean up
+    output_file.unlink()
 
 
 def test_generate_report_empty_data():
-    """Test report generation with empty DataFrame."""
-    df = pd.DataFrame(columns=['Symbol', 'Shortname', 'Marketcap', 'Sector'])
-
+    """Test report generation with empty data."""
+    # Create empty DataFrame
+    df = pd.DataFrame()
+    
     # Generate report
     report = generate_report(df)
-    assert isinstance(report, str)
-    assert "No data available for analysis" in report 
+    
+    # Check report content
+    assert report == "No data available for analysis." 

@@ -1,68 +1,57 @@
-"""Send reports via email using yagmail."""
+"""Email functionality for sending reports.
+
+This module provides functions to send generated reports via email.
+"""
 from __future__ import annotations
 
 import os
-from pathlib import Path
-from typing import Optional
-
-import yagmail
-from dotenv import load_dotenv, find_dotenv
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from typing import Optional, List
 
 __all__ = ["send_report"]
 
 
 def send_report(
-    report_path: Path,
-    recipient: str,
-    subject: str = "S&P 500 Report",
-    sender_email: Optional[str] = None,
-    sender_password: Optional[str] = None,
+    report: str,
+    recipients: List[str],
+    subject: Optional[str] = None
 ) -> None:
-    """Send the generated report via email.
+    """Send a report via email.
     
     Args:
-        report_path: Path to the report file
-        recipient: Email address of the recipient
-        subject: Email subject line
-        sender_email: Sender's email address (if None, uses environment variable)
-        sender_password: Sender's password (if None, uses environment variable)
+        report: The report content to send
+        recipients: List of email addresses to send to
+        subject: Optional subject line (defaults to "S&P 500 Analysis Report")
+        
+    Raises:
+        ValueError: If email credentials are missing
+        smtplib.SMTPException: If email sending fails
     """
-    # Load environment variables
-    env_path = find_dotenv()
-    print(f"Looking for .env file at: {env_path}")
-    print(f".env file exists: {Path(env_path).exists() if env_path else False}")
+    # Get email credentials from environment
+    email_user = os.getenv("EMAIL_USER")
+    email_password = os.getenv("EMAIL_PASSWORD")
     
-    load_dotenv(env_path)
-    
-    # Debug: Print environment variables (without showing the actual password)
-    print("\nEnvironment variables after loading:")
-    print(f"EMAIL_USER found: {'Yes' if os.getenv('EMAIL_USER') else 'No'}")
-    print(f"EMAIL_PASSWORD found: {'Yes' if os.getenv('EMAIL_PASSWORD') else 'No'}")
-    print(f"REPORT_RECIPIENT found: {'Yes' if os.getenv('REPORT_RECIPIENT') else 'No'}")
-    
-    # Get sender credentials from environment variables if not provided
-    sender_email = sender_email or os.getenv("EMAIL_USER")
-    sender_password = sender_password or os.getenv("EMAIL_PASSWORD")
-    
-    if not (sender_email and sender_password):
+    if not email_user or not email_password:
         raise ValueError("Missing EMAIL_USER / EMAIL_PASSWORD")
     
-    if not report_path.exists():
-        raise FileNotFoundError(f"Report not found at {report_path}")
+    # Create message
+    msg = MIMEMultipart()
+    msg["From"] = email_user
+    msg["To"] = ", ".join(recipients)
+    msg["Subject"] = subject or "S&P 500 Analysis Report"
     
-    print(f"\nAttempting to send email to: {recipient}")
-    print(f"Using sender email: {sender_email}")
+    # Attach report
+    msg.attach(MIMEText(report, "plain"))
     
-    # Initialize yagmail SMTP connection
-    yag = yagmail.SMTP(sender_email, sender_password)
-    
-    # Send the email
-    body = "Attached: latest S&P 500 analysis."
-    yag.send(
-        to=recipient,
-        subject=subject,
-        contents=[body, str(report_path)]
-    )
+    # Send email
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(email_user, email_password)
+            server.send_message(msg)
+    except smtplib.SMTPException as e:
+        raise smtplib.SMTPException(f"Failed to send email: {e}")
 
 
 def main() -> None:
@@ -78,7 +67,7 @@ def main() -> None:
             raise SystemExit("Report or REPORT_RECIPIENT missing.")
         
         # Send the report
-        send_report(report, recipient)
+        send_report(str(report), [recipient])
         print(f"✓ Mail sent to {recipient}")
         
     except Exception as e:
