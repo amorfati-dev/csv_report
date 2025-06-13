@@ -1,4 +1,5 @@
 """Tests for the load module."""
+
 import pytest
 import pandas as pd
 from csv_report.load import load_csv
@@ -8,19 +9,19 @@ def test_load_default_csv():
     """Test loading default CSV file."""
     # Create sample data
     data = {
-        'Symbol': ['AAPL', 'MSFT', 'GOOGL'],
-        'Shortname': ['Apple', 'Microsoft', 'Alphabet'],
-        'Marketcap': [2000000000000, 1800000000000, 1500000000000],
-        'Sector': ['Technology', 'Technology', 'Technology']
+        "Symbol": ["AAPL", "MSFT", "GOOGL"],
+        "Shortname": ["Apple", "Microsoft", "Alphabet"],
+        "Marketcap": [2000000000000, 1800000000000, 1500000000000],
+        "Sector": ["Technology", "Technology", "Technology"],
     }
     df = pd.DataFrame(data)
-    
+
     # Save to default location
     df.to_csv("data/sp500.csv", index=False)
-    
+
     # Load data
     loaded_df = load_csv()
-    
+
     # Check data
     assert isinstance(loaded_df, pd.DataFrame)
     assert len(loaded_df) == 3
@@ -31,19 +32,19 @@ def test_load_csv_from_url():
     """Test loading CSV from URL."""
     # Create sample data
     data = {
-        'Symbol': ['AAPL', 'MSFT', 'GOOGL'],
-        'Shortname': ['Apple', 'Microsoft', 'Alphabet'],
-        'Marketcap': [2000000000000, 1800000000000, 1500000000000],
-        'Sector': ['Technology', 'Technology', 'Technology']
+        "Symbol": ["AAPL", "MSFT", "GOOGL"],
+        "Shortname": ["Apple", "Microsoft", "Alphabet"],
+        "Marketcap": [2000000000000, 1800000000000, 1500000000000],
+        "Sector": ["Technology", "Technology", "Technology"],
     }
     df = pd.DataFrame(data)
-    
+
     # Save to temporary file
     df.to_csv("data/sp500.csv", index=False)
-    
+
     # Load data
     loaded_df = load_csv(csv_file="data/sp500.csv")
-    
+
     # Check data
     assert isinstance(loaded_df, pd.DataFrame)
     assert len(loaded_df) == 3
@@ -53,4 +54,4 @@ def test_load_csv_from_url():
 def test_load_invalid_file():
     """Test loading invalid file."""
     with pytest.raises(FileNotFoundError):
-        load_csv("nonexistent.csv") 
+        load_csv("nonexistent.csv")

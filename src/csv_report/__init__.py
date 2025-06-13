@@ -13,5 +13,5 @@ __all__ = [
     "calculate_sector_kpis",
     "generate_report",
     "save_report",
-    "send_report"
-] 
+    "send_report",
+]

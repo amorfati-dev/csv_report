@@ -1,4 +1,5 @@
 """Tests for the main module."""
+
 import pytest
 from csv_report.main import parse_args
 
@@ -20,4 +21,4 @@ def test_custom_args():
 def test_invalid_args():
     """Test invalid argument handling."""
     with pytest.raises(SystemExit):
-        parse_args(["--invalid-arg"]) 
+        parse_args(["--invalid-arg"])

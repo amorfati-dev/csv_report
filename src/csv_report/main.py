@@ -1,4 +1,5 @@
 """Main module for the CSV report generator."""
+
 import argparse
 from pathlib import Path
 
@@ -19,17 +20,14 @@ def parse_args(args=None):
         description="Generate a report from a CSV file and optionally email it."
     )
     parser.add_argument(
-        "--csv-file",
-        help="Path to the CSV file to analyze",
-        type=str,
-        default=None
+        "--csv-file", help="Path to the CSV file to analyze", type=str, default=None
     )
     parser.add_argument(
         "--output-format",
         help="Format of the output report (markdown or html)",
         type=str,
         choices=["markdown", "html"],
-        default="markdown"
+        default="markdown",
     )
     return parser.parse_args(args)
 
@@ -48,8 +46,7 @@ def main():
 
         # Save report
         output_file = save_report(
-            report,
-            Path(f"reports/sp500_analysis.{args.output_format}")
+            report, Path(f"reports/sp500_analysis.{args.output_format}")
         )
         print(f"Report generated and saved to: {output_file}")
 
@@ -60,4 +57,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

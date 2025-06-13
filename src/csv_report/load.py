@@ -16,18 +16,17 @@ __all__ = ["load_csv"]
 
 
 def load_csv(
-    csv_file: Optional[Union[str, Path]] = None,
-    url: Optional[str] = None
+    csv_file: Optional[Union[str, Path]] = None, url: Optional[str] = None
 ) -> pd.DataFrame:
     """Load S&P 500 companies data from CSV file or URL.
-    
+
     Args:
         csv_file: Path to local CSV file (optional)
         url: URL to remote CSV file (optional)
-        
+
     Returns:
         DataFrame containing S&P 500 companies data
-        
+
     Raises:
         FileNotFoundError: If local file not found
         requests.RequestException: If URL request fails
