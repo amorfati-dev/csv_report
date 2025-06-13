@@ -6,7 +6,6 @@ a local CSV file or a remote URL.
 """
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import Optional, Union
 import pandas as pd
