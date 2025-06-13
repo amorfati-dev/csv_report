@@ -11,7 +11,7 @@ def test_load_env_vars_missing_file():
 
 def test_send_report_missing_credentials():
     """Test sending report with missing credentials."""
-    with pytest.raises(ValueError, match="Email credentials not provided"):
+    with pytest.raises(ValueError, match="Missing EMAIL_USER / EMAIL_PASSWORD"):
         with patch('os.getenv', return_value=None):
             send_report(
                 report_path=Path("test_report.md"),
