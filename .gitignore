@@ -17,6 +17,7 @@ ENV/
 
 # Testing and Coverage
 .coverage
+coverage.xml
 htmlcov/
 
 # Jupyter Notebook checkpoints
@@ -38,3 +39,9 @@ dist/
 .Spotlight-V100
 .Trashes
 Thumbs.db
+
+# Environment variables
+.env
+
+# Test files
+temp_test.csv
