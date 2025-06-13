@@ -7,13 +7,15 @@ All potentially fragile I/O is concentrated here so that the rest of the
 project can focus on analysis and reporting.
 """
 from __future__ import annotations
-
+    
 import tempfile
 import urllib.request
 from pathlib import Path
 from typing import Union, Optional
 from urllib.parse import urlparse
 from typing import Optional, Union
+import os
+import requests
 
 import pandas as pd
 
@@ -47,60 +49,50 @@ def _download_to_tmp(url: str) -> Path:
 
 
 def get_default_csv_path() -> Path:
-    """Get the default path to the S&P 500 companies CSV file."""
-    # Go up from src/csv_report to project root
-    project_root = Path(__file__).parent.parent.parent
-    return project_root / 'data' / 'sp500_companies.csv'
+    """Get the default path to the CSV file.
+
+    Returns:
+        Path to the default CSV file
+    """
+    return Path(__file__).parent.parent.parent / "data" / "sp500.csv"
 
 
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
 
-def load_csv(source: Optional[str | Path] = None, required_columns: Optional[list[str]] = None) -> pd.DataFrame:
+def load_csv(
+    file_path: Optional[Union[str, Path]] = None,
+    url: Optional[str] = None
+) -> pd.DataFrame:
     """Load CSV data from a file or URL.
-    
+
     Args:
-        source: Path to CSV file or URL. If None, uses default S&P 500 file.
-        required_columns: List of columns to require. If None, use default. If empty list, skip check.
-        
+        file_path: Path to the CSV file. If None, uses the default path.
+        url: URL to download the CSV from. If provided, overrides file_path.
+
     Returns:
-        DataFrame containing the CSV data.
-        
+        DataFrame containing the CSV data
+
     Raises:
-        DataLoadError: If the file cannot be loaded or parsed.
+        FileNotFoundError: If the file doesn't exist and no URL is provided
+        ValueError: If neither file_path nor url is provided
     """
-    try:
-        # Use default path if no source provided
-        if source is None:
-            source = get_default_csv_path()
-            
-        # Convert string to Path if needed
-        if _is_url(source):
-            source = _download_to_tmp(source)
-        else:
-            source = Path(source)
-            
-        # Check if file exists
-        if not source.exists():
-            raise DataLoadError(f"CSV file not found: {source}")
-            
-        # Load the data
-        df = pd.read_csv(source)
-        
-        # Validate required columns
-        if required_columns is None:
-            required_columns_check = ['Symbol', 'Shortname', 'Marketcap', 'Sector']
-        else:
-            required_columns_check = required_columns
-        if required_columns_check:
-            missing_columns = [col for col in required_columns_check if col not in df.columns]
-            if missing_columns:
-                raise DataLoadError(f"Missing required columns: {', '.join(missing_columns)}")
-        
-        return df
-        
-    except pd.errors.ParserError as e:
-        raise DataLoadError(f"Could not parse CSV file: {e}")
-    except Exception as e:
-        raise DataLoadError(f"Error loading CSV file: {e}")
+    if url:
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            return pd.read_csv(pd.StringIO(response.text))
+        except requests.RequestException as e:
+            raise ValueError(f"Failed to download CSV from URL: {e}")
+
+    if file_path is None:
+        file_path = get_default_csv_path()
+
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(
+            f"CSV file not found at {file_path}. "
+            "Please provide a valid file path or URL."
+        )
+
+    return pd.read_csv(file_path)
