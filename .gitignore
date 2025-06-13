@@ -1,8 +1,11 @@
 # Python
 __pycache__/
+.pytest_cache/
 *.py[cod]
 *$py.class
 *.pyc
+/reports
+
 
 # Virtual Environment
 .env
@@ -16,7 +19,7 @@ ENV/
 .idea/
 
 # Testing and Coverage
-.coverage
+.coverage*
 coverage.xml
 htmlcov/
 
@@ -24,8 +27,9 @@ htmlcov/
 .ipynb_checkpoints/
 
 # Project specific
-*.txt
-!requirements.txt
++*.txt
++!requirements.txt
++!requirements-dev.txt
 
 # Build artifacts
 build/
