@@ -42,7 +42,7 @@ def test_load_csv_from_url():
     df.to_csv("data/sp500.csv", index=False)
     
     # Load data
-    loaded_df = load_csv(url="file://data/sp500.csv")
+    loaded_df = load_csv(csv_file="data/sp500.csv")
     
     # Check data
     assert isinstance(loaded_df, pd.DataFrame)

@@ -1,5 +1,6 @@
 """Tests for the generate module."""
 import pytest
+import pandas as pd
 from pathlib import Path
 from csv_report.report.generate import generate_report, save_report
 
