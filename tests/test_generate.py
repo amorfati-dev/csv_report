@@ -1,7 +1,7 @@
-import pytest
-from pathlib import Path
+"""Tests for the generate module."""
 import pandas as pd
 from csv_report.report.generate import generate_report, save_report
+
 
 def test_generate_report():
     """Test report generation from DataFrame."""
@@ -13,10 +13,10 @@ def test_generate_report():
         'Sector': ['Technology', 'Technology', 'Technology']
     }
     df = pd.DataFrame(data)
-    
+
     # Generate report
     report = generate_report(df)
-    
+
     # Check report content
     assert isinstance(report, str)
     assert "S&P 500 Analysis Report" in report
@@ -24,11 +24,12 @@ def test_generate_report():
     assert "Microsoft" in report
     assert "Alphabet" in report
 
+
 def test_save_report(tmp_path):
     """Test saving report to file."""
     # Create sample report content
     report_content = "Test Report Content"
-    
+
     # Save report
     report_path = tmp_path / "test_report.md"
     saved_path = save_report(report_content, report_path)
@@ -37,13 +38,12 @@ def test_save_report(tmp_path):
     assert report_path.exists()
     assert report_path.read_text() == "Test Report Content"
 
+
 def test_generate_report_empty_data():
     """Test report generation with empty DataFrame."""
     df = pd.DataFrame(columns=['Symbol', 'Shortname', 'Marketcap', 'Sector'])
-    
+
     # Generate report
     report = generate_report(df)
-    
-    # Check report content
     assert isinstance(report, str)
     assert "No data available for analysis" in report 

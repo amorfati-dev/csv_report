@@ -1,1 +1,1 @@
-"""Test package for csv_report.""" 
+"""Test package for CSV Report Generator.""" 

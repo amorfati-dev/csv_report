@@ -1,4 +1,4 @@
-"""CSV Report - A tool for analyzing CSV data and generating reports."""
+"""CSV Report Generator package."""
 
 from .load import DataLoadError, load_csv
 from .main import main
