@@ -16,6 +16,7 @@ from urllib.parse import urlparse
 from typing import Optional, Union
 import os
 import requests
+from io import StringIO
 
 import pandas as pd
 
@@ -82,7 +83,7 @@ def load_csv(
         try:
             response = requests.get(url)
             response.raise_for_status()
-            return pd.read_csv(pd.StringIO(response.text))
+            return pd.read_csv(StringIO(response.text))
         except requests.RequestException as e:
             raise ValueError(f"Failed to download CSV from URL: {e}")
 
