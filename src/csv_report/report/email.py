@@ -6,46 +6,17 @@ from pathlib import Path
 from typing import Optional
 
 import yagmail
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 __all__ = ["send_report"]
-
-
-def load_env_vars() -> None:
-    """Load environment variables from .env file."""
-    # Get the project root directory (3 levels up from this file)
-    project_root = Path(__file__).parent.parent.parent.parent
-    env_path = project_root / '.env'
-    
-    print(f"Looking for .env file at: {env_path}")
-    print(f"File exists: {env_path.exists()}")
-    
-    if not env_path.exists():
-        raise FileNotFoundError(
-            f".env file not found at {env_path}. "
-            "Please create a .env file with EMAIL_USER, EMAIL_PASSWORD, and REPORT_RECIPIENT."
-        )
-    
-    # Print the contents of the .env file (for debugging)
-    print("\nContents of .env file:")
-    with open(env_path, 'r') as f:
-        print(f.read())
-    
-    load_dotenv(env_path)
-    
-    # Debug: Print environment variables (without showing the actual password)
-    print("\nEnvironment variables after loading:")
-    print(f"EMAIL_USER found: {'Yes' if os.getenv('EMAIL_USER') else 'No'}")
-    print(f"EMAIL_PASSWORD found: {'Yes' if os.getenv('EMAIL_PASSWORD') else 'No'}")
-    print(f"REPORT_RECIPIENT found: {'Yes' if os.getenv('REPORT_RECIPIENT') else 'No'}")
 
 
 def send_report(
     report_path: Path,
     recipient: str,
-    subject: str = "S&P 500 Companies Analysis Report",
+    subject: str = "S&P 500 Report",
     sender_email: Optional[str] = None,
-    sender_password: Optional[str] = None
+    sender_password: Optional[str] = None,
 ) -> None:
     """Send the generated report via email.
     
@@ -57,58 +28,58 @@ def send_report(
         sender_password: Sender's password (if None, uses environment variable)
     """
     # Load environment variables
-    load_env_vars()
+    env_path = find_dotenv()
+    print(f"Looking for .env file at: {env_path}")
+    print(f".env file exists: {Path(env_path).exists() if env_path else False}")
+    
+    load_dotenv(env_path)
+    
+    # Debug: Print environment variables (without showing the actual password)
+    print("\nEnvironment variables after loading:")
+    print(f"EMAIL_USER found: {'Yes' if os.getenv('EMAIL_USER') else 'No'}")
+    print(f"EMAIL_PASSWORD found: {'Yes' if os.getenv('EMAIL_PASSWORD') else 'No'}")
+    print(f"REPORT_RECIPIENT found: {'Yes' if os.getenv('REPORT_RECIPIENT') else 'No'}")
     
     # Get sender credentials from environment variables if not provided
     sender_email = sender_email or os.getenv("EMAIL_USER")
     sender_password = sender_password or os.getenv("EMAIL_PASSWORD")
     
-    if not sender_email or not sender_password:
-        raise ValueError(
-            "Email credentials not provided. Either pass them as arguments "
-            "or set EMAIL_USER and EMAIL_PASSWORD in .env file."
-        )
+    if not (sender_email and sender_password):
+        raise ValueError("Missing EMAIL_USER / EMAIL_PASSWORD")
     
-    print(f"Attempting to send email to: {recipient}")
+    if not report_path.exists():
+        raise FileNotFoundError(f"Report not found at {report_path}")
+    
+    print(f"\nAttempting to send email to: {recipient}")
+    print(f"Using sender email: {sender_email}")
     
     # Initialize yagmail SMTP connection
     yag = yagmail.SMTP(sender_email, sender_password)
     
     # Send the email
+    body = "Attached: latest S&P 500 analysis."
     yag.send(
         to=recipient,
         subject=subject,
-        contents=[
-            "Please find attached the S&P 500 Companies Analysis Report.",
-            str(report_path)
-        ]
+        contents=[body, str(report_path)]
     )
 
 
 def main() -> None:
     """Send the latest report via email."""
     try:
-        # Load environment variables
-        load_env_vars()
-        
         # Get the latest report
-        reports_dir = Path(__file__).parent.parent.parent.parent / "reports"
-        report_path = reports_dir / "sp500_analysis.markdown"
-        
-        print(f"Looking for report at: {report_path}")
-        print(f"Report exists: {report_path.exists()}")
-        
-        if not report_path.exists():
-            raise FileNotFoundError(f"Report not found at {report_path}")
+        reports_dir = Path(__file__).parents[3] / "reports"
+        report = reports_dir / "sp500_analysis.markdown"
         
         # Get recipient email from environment variable
         recipient = os.getenv("REPORT_RECIPIENT")
-        if not recipient:
-            raise ValueError("REPORT_RECIPIENT not set in .env file")
+        if not (report.exists() and recipient):
+            raise SystemExit("Report or REPORT_RECIPIENT missing.")
         
         # Send the report
-        send_report(report_path, recipient)
-        print(f"Report sent successfully to {recipient}")
+        send_report(report, recipient)
+        print(f"✓ Mail sent to {recipient}")
         
     except Exception as e:
         print(f"Error sending report: {e}")

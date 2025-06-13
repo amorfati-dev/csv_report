@@ -1,33 +1,22 @@
 """Main entry point for the CSV report generator."""
 from __future__ import annotations
 
-import pandas as pd
 from pathlib import Path
 import argparse
 import sys
 from csv_report.load import DataLoadError, load_csv, get_default_csv_path
-from csv_report.report.compute import compute_all_kpis
-from csv_report.report.generate import generate_report, save_report
+from csv_report.report.email import send_report
 
-
-
-def send_email(to: str, subject: str, body: str) -> None:
-    """Send an email with the report."""
-    print("[EMAIL]")
-    print(f"To     : {to}")
-    print(f"Subject: {subject}")
-    print("Body   :\n" + body)
-
-def parse_args() -> argparse.Namespace:
+def parse_args(args: list[str] | None = None) -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
         description="Generate a report from a CSV file and optionally email it.")
 
     parser.add_argument(
-    "--csv", "-c",
-    default=str(get_default_csv_path()),
-    help="Path or URL to CSV (default: %(default)s)"
-)
+        "--csv", "-c",
+        default=str(get_default_csv_path()),
+        help="Path or URL to CSV (default: %(default)s)"
+    )
 
     parser.add_argument(
         "--email", "-e",
@@ -38,7 +27,7 @@ def parse_args() -> argparse.Namespace:
         default="CSV Report",
         help="Subject line for the email")
 
-    return parser.parse_args()
+    return parser.parse_args(args)
 
 def main() -> None:
     """Main entry point."""
@@ -57,9 +46,16 @@ def main() -> None:
             f"Sector Distribution:\n{df['Sector'].value_counts().head()}"
         )
 
+        # Save report to file
+        report_path = Path("reports/sp500_analysis.markdown")
+        report_path.parent.mkdir(exist_ok=True)
+        report_path.write_text(report_body)
+
         # Send or print report
         if args.email:
-            send_email(args.email, args.subject, report_body)
+            print(f"Sending report to {args.email}...")
+            send_report(report_path, args.email, subject=args.subject)
+            print("✓ Report sent successfully!")
         else:
             print(report_body)
             
