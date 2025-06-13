@@ -3,21 +3,27 @@ import pytest
 from csv_report.main import parse_args
 
 
-def test_parse_args_default():
-    """Test argument parsing with default values."""
+def test_default_args():
+    """Test default argument parsing."""
     args = parse_args([])
-    assert args.csv_file is None
-    assert args.output_format == "markdown"
+    assert args.csv_file == "data/sp500.csv"
+    assert args.output == "reports/sp500_report.txt"
+    assert args.recipients == []
 
 
-def test_parse_args_custom():
-    """Test argument parsing with custom values."""
-    args = parse_args(["--csv-file", "test.csv", "--output-format", "markdown"])
-    assert args.csv_file == "test.csv"
-    assert args.output_format == "markdown"
+def test_custom_args():
+    """Test custom argument parsing."""
+    args = parse_args([
+        "--csv-file", "custom.csv",
+        "--output", "custom_report.txt",
+        "--recipients", "test@example.com"
+    ])
+    assert args.csv_file == "custom.csv"
+    assert args.output == "custom_report.txt"
+    assert args.recipients == ["test@example.com"]
 
 
-def test_parse_args_system_exit():
-    """Test argument parsing with invalid values."""
+def test_invalid_args():
+    """Test invalid argument handling."""
     with pytest.raises(SystemExit):
-        parse_args(["--invalid-option"]) 
+        parse_args(["--invalid-arg"]) 
