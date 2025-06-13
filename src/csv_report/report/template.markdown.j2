@@ -1,0 +1,17 @@
+# S&P 500 Companies Analysis Report
+
+## Base KPIs
+
+- Total Companies: {{ base_kpis.total_companies }}
+- Average Market Cap: ${{ "{:,.2f}".format(base_kpis.avg_market_cap) }}
+- Median Market Cap: ${{ "{:,.2f}".format(base_kpis.median_market_cap) }}
+
+## Sector Analysis
+
+{% for _, row in sector_kpis.iterrows() %}
+### {{ row.Sector }}
+- Number of Companies: {{ row.company_count }}
+- Average Market Cap: ${{ "{:,.2f}".format(row.avg_market_cap) }}
+- Median Market Cap: ${{ "{:,.2f}".format(row.median_market_cap) }}
+
+{% endfor %}   

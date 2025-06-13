@@ -1,0 +1,49 @@
+name: Test
+
+on:
+  push:
+    branches: [ main, feat/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.12]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
+    
+    - name: Create test data directory
+      run: |
+        mkdir -p data
+        echo "Symbol,Shortname,Marketcap,Sector" > data/sp500.csv
+        echo "AAPL,Apple,2000000000000,Technology" >> data/sp500.csv
+        echo "MSFT,Microsoft,1800000000000,Technology" >> data/sp500.csv
+        echo "GOOGL,Alphabet,1500000000000,Technology" >> data/sp500.csv
+    
+    - name: Run tests
+      run: |
+        pytest --cov=src tests/
+    
+    - name: Run flake8
+      run: |
+        flake8 src/ tests/
+
+
+    - name: Install runtime + dev deps
+      run: |
+        pip install -e .
+        pip install -r requirements.txt -r requirements-dev.txt

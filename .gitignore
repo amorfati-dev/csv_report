@@ -1,14 +1,40 @@
-.venv/
-*.pyc
-
 # Python
 __pycache__/
+.pytest_cache/
 *.py[cod]
 *$py.class
+*.pyc
+/reports
+
+
+# Virtual Environment
+.env
+.venv/
+env/
+venv/
+ENV/
 
 # IDE
 .vscode/
 .idea/
+
+# Testing and Coverage
+.coverage*
+coverage.xml
+htmlcov/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Project specific
++*.txt
++!requirements.txt
++!requirements-dev.txt
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
 
 # OS
 .DS_Store
@@ -16,19 +42,10 @@ __pycache__/
 ._*
 .Spotlight-V100
 .Trashes
+Thumbs.db
 
-# Project specific
-*.txt
-!requirements.txt
+# Environment variables
+.env
 
-# Build artifacts
-build/
-dist/
-*.egg-info/
-
-# Test and coverage
-.coverage
-htmlcov/
-
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints/ 
+# Test files
+temp_test.csv

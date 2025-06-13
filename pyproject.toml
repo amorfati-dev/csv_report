@@ -8,7 +8,12 @@ version = "0.1.0"
 description = "Tiny CLI that loads a CSV, analyses it and optionally e-mails a report."
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = ["pandas>=2.1"]
+dependencies = [
+    "pandas>=2.1",
+    "jinja2>=3.0.0",
+    "yagmail>=0.15.0",
+    "python-dotenv>=1.0.0"
+]
 
 [tool.setuptools]          # ❶ sagt: alle Pakete liegen unter src/
 package-dir = {"" = "src"}
@@ -19,3 +24,15 @@ where = ["src"]
 
 [project.scripts]          # ❷ CLI-Eintrag
 csv_report = "csv_report.main:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "flake8>=6.0.0"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "--cov=csv_report --cov-report=term-missing"

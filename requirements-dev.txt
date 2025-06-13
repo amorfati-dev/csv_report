@@ -1,0 +1,3 @@
+requests-mock
+pytest-cov
+pytest>=7.0.0
