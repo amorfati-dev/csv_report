@@ -19,8 +19,8 @@ def test_calculate_base_kpis():
 
     # Check results
     assert kpis['total_companies'] == 3
-    assert kpis['total_marketcap'] == 5300000000000
-    assert kpis['avg_marketcap'] == 1766666666666.67
+    assert kpis['avg_market_cap'] == 1766666666666.6667
+    assert kpis['median_market_cap'] == 1800000000000
 
 
 def test_calculate_sector_kpis():
@@ -38,6 +38,8 @@ def test_calculate_sector_kpis():
     kpis = calculate_sector_kpis(df)
 
     # Check results
-    assert 'Technology' in kpis
-    assert kpis['Technology']['count'] == 3
-    assert kpis['Technology']['total_marketcap'] == 5300000000000 
+    assert len(kpis) == 1  # Only one sector
+    assert kpis['Sector'].iloc[0] == 'Technology'
+    assert kpis['avg_market_cap'].iloc[0] == 1766666666666.6667
+    assert kpis['median_market_cap'].iloc[0] == 1800000000000
+    assert kpis['company_count'].iloc[0] == 3 
