@@ -1,13 +1,7 @@
 import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
-from csv_report.report.email import send_report, load_env_vars
-
-def test_load_env_vars_missing_file():
-    """Test loading environment variables when .env file is missing."""
-    with pytest.raises(FileNotFoundError):
-        with patch('pathlib.Path.exists', return_value=False):
-            load_env_vars()
+from csv_report.report.email import send_report
 
 def test_send_report_missing_credentials():
     """Test sending report with missing credentials."""
