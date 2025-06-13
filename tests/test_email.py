@@ -15,8 +15,14 @@ def test_send_report_missing_credentials():
 def test_send_report_success():
     """Test successful report sending."""
     mock_yag = MagicMock()
+    env_vars = {
+        'EMAIL_USER': 'test@example.com',
+        'EMAIL_PASSWORD': 'password',
+        'REPORT_RECIPIENT': 'recipient@example.com'
+    }
+    
     with patch('yagmail.SMTP', return_value=mock_yag), \
-         patch('os.getenv', side_effect=['test@example.com', 'password', 'recipient@example.com']), \
+         patch('os.getenv', side_effect=lambda x: env_vars.get(x)), \
          patch('pathlib.Path.exists', return_value=True):
         
         send_report(
@@ -26,9 +32,9 @@ def test_send_report_success():
         )
         
         mock_yag.send.assert_called_once()
-        
-        # Verify yagmail was called correctly
         call_args = mock_yag.send.call_args[1]
         assert call_args['to'] == "recipient@example.com"
+        
+        # Verify yagmail was called correctly
         assert call_args['subject'] == "Test Report"
         assert "test_report.md" in str(call_args['contents'][1]) 

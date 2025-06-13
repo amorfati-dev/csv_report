@@ -23,34 +23,25 @@ def get_template_dir() -> Path:
     return Path(__file__).parent
 
 
-def generate_report(output_format: str = "markdown") -> str:
-    """Generate a report from the computed KPIs.
-    
+def generate_report(data: pd.DataFrame) -> str:
+    """Generate a report from the DataFrame.
+
     Args:
-        output_format: The format of the output ("markdown" or "html")
-        
+        data: DataFrame containing the analysis data
+
     Returns:
-        The generated report as a string
+        Generated report as a string
     """
-    # Load and compute data
-    df = load_csv()
-    kpis = compute_all_kpis(df)
-    
-    # Set up Jinja2 environment
-    template_dir = get_template_dir()
+    # Initialize Jinja2 environment
+    template_dir = Path(__file__).parent
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(template_dir),
         autoescape=True
     )
     
     # Load and render template
-    template_name = f"template.{output_format}.j2"
-    template = env.get_template(template_name)
-    
-    return template.render(
-        base_kpis=kpis["base_kpis"],
-        sector_kpis=kpis["sector_kpis"]
-    )
+    template = env.get_template("template.j2")
+    return template.render(data=data)
 
 
 def save_report(report: str, output_path: Path) -> Path:
@@ -77,7 +68,8 @@ def main() -> None:
     """Generate and save the report."""
     try:
         # Generate markdown report
-        report = generate_report("markdown")
+        df = load_csv()
+        report = generate_report(df)
         output_file = save_report(report, Path("reports/sp500_analysis.markdown"))
         print(f"Report generated and saved to: {output_file}")
     except Exception as e:
