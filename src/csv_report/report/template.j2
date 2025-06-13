@@ -9,6 +9,11 @@ No data available for analysis.
 {% else %}
 Total companies analyzed: {{ data|length }}
 
+### Companies Analyzed
+{% for _, row in data.iterrows() %}
+- {{ row['Shortname'] }} ({{ row['Symbol'] }})
+{% endfor %}
+
 ### Market Cap Distribution
 - Average Market Cap: ${{ (data['Marketcap'].mean() / 1e9)|round(2) }}B
 - Median Market Cap: ${{ (data['Marketcap'].median() / 1e9)|round(2) }}B
