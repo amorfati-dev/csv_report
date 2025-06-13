@@ -16,7 +16,7 @@ def test_send_report_success():
     """Test successful report sending."""
     mock_yag = MagicMock()
     with patch('yagmail.SMTP', return_value=mock_yag), \
-         patch('os.getenv', side_effect=['test@example.com', 'password']), \
+         patch('os.getenv', side_effect=['test@example.com', 'password', 'recipient@example.com']), \
          patch('pathlib.Path.exists', return_value=True):
         
         send_report(
@@ -25,8 +25,9 @@ def test_send_report_success():
             subject="Test Report"
         )
         
-        # Verify yagmail was called correctly
         mock_yag.send.assert_called_once()
+        
+        # Verify yagmail was called correctly
         call_args = mock_yag.send.call_args[1]
         assert call_args['to'] == "recipient@example.com"
         assert call_args['subject'] == "Test Report"

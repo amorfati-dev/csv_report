@@ -53,28 +53,24 @@ def generate_report(output_format: str = "markdown") -> str:
     )
 
 
-def save_report(report: str, output_format: str = "markdown") -> Path:
+def save_report(report: str, output_path: Path) -> Path:
     """Save the generated report to a file.
-    
+
     Args:
         report: The report content as a string
-        output_format: The format of the output ("markdown" or "html")
-        
+        output_path: The path where to save the report
+
     Returns:
         Path to the saved report file
     """
-    # Create reports directory if it doesn't exist
-    reports_dir = Path(__file__).parent.parent.parent.parent / "reports"
-    reports_dir.mkdir(exist_ok=True)
-    
-    # Generate output filename
-    output_file = reports_dir / f"sp500_analysis.{output_format}"
-    
+    # Create parent directory if it doesn't exist
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
     # Save the report
-    with open(output_file, "w", encoding="utf-8") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write(report)
-    
-    return output_file
+
+    return output_path
 
 
 def main() -> None:
@@ -82,7 +78,7 @@ def main() -> None:
     try:
         # Generate markdown report
         report = generate_report("markdown")
-        output_file = save_report(report, "markdown")
+        output_file = save_report(report, Path("reports/sp500_analysis.markdown"))
         print(f"Report generated and saved to: {output_file}")
     except Exception as e:
         print(f"Error generating report: {e}")

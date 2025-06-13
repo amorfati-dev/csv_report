@@ -1,0 +1,22 @@
+# S&P 500 Analysis Report
+
+## Overview
+This report provides an analysis of the S&P 500 companies.
+
+## Data Summary
+{% if data.empty %}
+No data available for analysis.
+{% else %}
+Total companies analyzed: {{ data|length }}
+
+### Market Cap Distribution
+- Average Market Cap: ${{ (data['Marketcap'].mean() / 1e9)|round(2) }}B
+- Median Market Cap: ${{ (data['Marketcap'].median() / 1e9)|round(2) }}B
+- Largest Company: {{ data.loc[data['Marketcap'].idxmax(), 'Shortname'] }} (${{ (data['Marketcap'].max() / 1e9)|round(2) }}B)
+- Smallest Company: {{ data.loc[data['Marketcap'].idxmin(), 'Shortname'] }} (${{ (data['Marketcap'].min() / 1e9)|round(2) }}B)
+
+### Sector Analysis
+{% for sector, count in data['Sector'].value_counts().items() %}
+- {{ sector }}: {{ count }} companies
+{% endfor %}
+{% endif %} 

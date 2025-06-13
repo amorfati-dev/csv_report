@@ -19,7 +19,7 @@ def test_generate_report():
     
     # Check report content
     assert isinstance(report, str)
-    assert "S&P 500 Companies Analysis" in report
+    assert "S&P 500 Analysis Report" in report
     assert "Apple" in report
     assert "Microsoft" in report
     assert "Alphabet" in report
@@ -31,11 +31,11 @@ def test_save_report(tmp_path):
     
     # Save report
     report_path = tmp_path / "test_report.md"
-    save_report(report_content, report_path)
+    saved_path = save_report(report_content, report_path)
     
-    # Check file exists and content is correct
+    assert saved_path == report_path
     assert report_path.exists()
-    assert report_path.read_text() == report_content
+    assert report_path.read_text() == "Test Report Content"
 
 def test_generate_report_empty_data():
     """Test report generation with empty DataFrame."""
@@ -46,5 +46,4 @@ def test_generate_report_empty_data():
     
     # Check report content
     assert isinstance(report, str)
-    assert "S&P 500 Companies Analysis" in report
-    assert "No companies found" in report 
+    assert "No data available for analysis" in report 
