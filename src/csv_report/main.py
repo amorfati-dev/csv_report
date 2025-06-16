@@ -39,7 +39,7 @@ def main():
         args = parse_args()
 
         # Load data
-        df = load_csv(file_path=args.csv_file)
+        df = load_csv(csv_file=args.csv_file)
 
         # Generate report
         report = generate_report(df)

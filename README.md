@@ -2,6 +2,58 @@
 
 Kleines CLI-Tool, das CSV-Daten auswertet und einen Report mailt.
 
+## Quick-Start
+
+### 1. Installation (als End-User)
+
+> Voraussetzung: **Python ≥ 3.12** ist installiert.
+
+```bash
+# Empfohlen – sauber isoliert per pipx
+python3 -m pip install --user pipx
+pipx ensurepath
+pipx install csv-report
+
+<details> <summary>Alternative: Poetry-basierte Entwicklungsversion (Editable Install)</summary>
+git clone https://github.com/amorfati-dev/csv_report
+cd csv_report
+poetry install             # installiert Dependencies + das Paket selbst
+poetry run csv-report --help
+</details>
+
+
+2. Erster Report
+csv-report \
+  --csv-file examples/sales_q1.csv \
+  --output-format html \
+  > report.html
+
+  | Option            | Bedeutung                        |
+| ----------------- | -------------------------------- |
+| `--csv-file`      | Pfad zur Eingabe-CSV             |
+| `--output-format` | `markdown` (Default) oder `html` |
+
+
+Mail-Versand aktivieren:
+Lege eine .env an (oder setze Umgebungs­variablen)<br>
+EMAIL_USER, EMAIL_PASSWORD, EMAIL_TO – danach wird die generierte Datei per Gmail versendet.
+
+3. Hilfe anzeigen
+
+csv-report --help
+
+
+---
+
+## 2 — Commit & Push
+
+```bash
+git add README.md
+git commit -m "docs: add Quick-Start section with install & usage"
+git push origin main
+
+
+
 ## Installation
 
 1. Clone the repository:
