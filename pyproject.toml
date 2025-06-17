@@ -12,7 +12,10 @@ dependencies = [
     "pandas>=2.1",
     "jinja2>=3.0.0",
     "yagmail>=0.15.0",
-    "python-dotenv>=1.0.0"
+    "python-dotenv>=1.0.0",
+    "fastapi (>=0.115.13,<0.116.0)",
+    "uvicorn[standard] (>=0.34.3,<0.35.0)",
+    "python-multipart (>=0.0.20,<0.0.21)"
 ]
 
 [tool.setuptools]          # ❶ sagt: alle Pakete liegen unter src/
@@ -21,6 +24,12 @@ package-dir = {"" = "src"}
 # Automatisches Auffinden der Packages
 [tool.setuptools.packages.find]
 where = ["src"]
+
+
+[tool.poetry.group.dev.dependencies]
+pytest-cov = "^6.2.1"
+black = "^25.1.0"
+ruff = "^0.11.13"
 
 [project.scripts]          # ❷ CLI-Eintrag
 csv_report = "csv_report.main:main"

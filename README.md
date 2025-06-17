@@ -22,7 +22,7 @@ poetry run csv-report --help
 </details>
 
 
-2. Erster Report
+2. pipErster Report
 csv-report \
   --csv-file examples/sales_q1.csv \
   --output-format html \
@@ -103,3 +103,17 @@ Healthcare            63
 Consumer Cyclical     55
 Name: count, dtype: int64
 ```
+
+# CSV-KPI-Service
+
+Minimaler FastAPI-Microservice, der eine hochgeladene CSV analysiert und Key-Performance-Indikatoren (KPIs) als JSON zurückgibt.
+
+## Quick Start
+
+```bash
+# 1) Environment starten
+poetry install
+poetry run uvicorn kpi_service.app:app --reload
+
+# 2) Datei hochladen
+curl -F "file=@sample.csv" http://127.0.0.1:8000/upload
