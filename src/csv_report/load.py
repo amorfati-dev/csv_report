@@ -4,6 +4,7 @@
 This module provides functions to load S&P 500 companies data from either
 a local CSV file or a remote URL.
 """
+
 from __future__ import annotations
 
 from pathlib import Path

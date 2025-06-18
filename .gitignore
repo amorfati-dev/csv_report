@@ -5,6 +5,7 @@ __pycache__/
 *$py.class
 *.pyc
 /reports
+*.sqlite3
 
 
 # Virtual Environment
@@ -49,3 +50,11 @@ Thumbs.db
 
 # Test files
 temp_test.csv
+
+# Poetry
+poetry.lock
+# (lock gerne versionieren, sonst hier rausnehmen)
+
+# Data
+*.csv
+*.xlsx

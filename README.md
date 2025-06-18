@@ -117,3 +117,30 @@ poetry run uvicorn kpi_service.app:app --reload
 
 # 2) Datei hochladen
 curl -F "file=@sample.csv" http://127.0.0.1:8000/upload
+
+{
+  "rows": 503,
+  "cols": 16,
+  "means": {
+    "Currentprice": 227.4,
+    "Marketcap": 112231944591.01
+  }
+}
+
+poetry run pytest -q
+
+
+poetry run black .
+poetry run ruff check .
+
+
+FROM python:3.12-slim
+WORKDIR /app
+COPY pyproject.toml poetry.lock ./
+RUN pip install --no-cache-dir poetry \
+ && poetry config virtualenvs.create false \
+ && poetry install --no-interaction --no-dev
+COPY src ./src
+CMD ["uvicorn", "kpi_service.app:app", "--host", "0.0.0.0", "--port", "8000"]
+
+
