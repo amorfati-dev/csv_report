@@ -30,8 +30,7 @@ jobs:
     - name: Lint & format
       run: |
         poetry run black --check .
-        poetry run ruff format --check .
-        poetry run ruff .
+        poetry run ruff check .
 
     - name: Run tests with coverage
       run: poetry run pytest --cov=src tests/
