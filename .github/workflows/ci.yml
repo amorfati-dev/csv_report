@@ -30,6 +30,7 @@ jobs:
     - name: Lint & format
       run: |
         poetry run black --check .
+        poetry run ruff format --check .
         poetry run ruff .
 
     - name: Run tests with coverage
