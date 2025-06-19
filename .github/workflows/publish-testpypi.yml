@@ -1,0 +1,27 @@
+name: Publish-TestPyPI
+
+on:
+  push:
+    tags: ["v*"]           # deploy only on version tags
+
+permissions:
+  id-token: write          # for future OIDC-based publishing
+  contents: read
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    environment: testpypi          # optional env protection
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Install Poetry
+      run: curl -sSL https://install.python-poetry.org | python - --yes
+    - name: Configure repository
+      run: |
+        poetry config repositories.testpypi https://test.pypi.org/legacy/
+        poetry config pypi-token.testpypi ${{ secrets.TEST_PYPI_TOKEN }}
+    - name: Build & publish
+      run: poetry publish --build -r testpypi
