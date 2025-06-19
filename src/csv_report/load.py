@@ -10,8 +10,14 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Optional, Union
 import pandas as pd
-import requests
 from io import StringIO
+
+# Optional import for URL functionality
+try:
+    import requests
+    REQUESTS_AVAILABLE = True
+except ImportError:
+    REQUESTS_AVAILABLE = False
 
 __all__ = ["load_csv"]
 
@@ -36,6 +42,8 @@ def load_csv(
     if csv_file is not None:
         return pd.read_csv(csv_file)
     elif url is not None:
+        if not REQUESTS_AVAILABLE:
+            raise ImportError("requests library is required for URL loading. Install with: pip install requests")
         response = requests.get(url)
         response.raise_for_status()
         return pd.read_csv(StringIO(response.text))

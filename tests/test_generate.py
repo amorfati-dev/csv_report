@@ -1,6 +1,8 @@
 """Tests for the generate module."""
 
 import pandas as pd
+import tempfile
+from pathlib import Path
 from csv_report.report.generate import generate_report, save_report
 
 
@@ -18,8 +20,8 @@ def test_generate_report():
     # Generate report
     report = generate_report(df)
 
-    # Check report content
-    assert "S&P 500 Analysis Report" in report
+    # Check report content - updated to match new template
+    assert "📊 S&P 500 Companies Analysis Report" in report
     assert "Apple" in report
     assert "Microsoft" in report
     assert "Alphabet" in report
@@ -30,14 +32,18 @@ def test_save_report():
     # Create test report
     report = "Test Report\n==========\n\nTest content."
 
-    # Save report
-    output_file = save_report(report)
+    # Create temporary file for testing
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.markdown', delete=False) as tmp:
+        tmp_path = Path(tmp.name)
+
+    # Save report to temporary file
+    output_file = save_report(report, output_file=tmp_path)
 
     # Check file exists and content
     assert output_file.exists()
     assert output_file.read_text() == report
 
-    # Clean up
+    # Clean up temporary file
     output_file.unlink()
 
 

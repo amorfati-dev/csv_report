@@ -63,15 +63,18 @@ def main() -> None:
     try:
         # Get the latest report
         reports_dir = Path(__file__).parents[3] / "reports"
-        report = reports_dir / "sp500_analysis.markdown"
+        report_file = reports_dir / "sp500_analysis.markdown"
 
         # Get recipient email from environment variable
         recipient = os.getenv("REPORT_RECIPIENT")
-        if not (report.exists() and recipient):
+        if not (report_file.exists() and recipient):
             raise SystemExit("Report or REPORT_RECIPIENT missing.")
 
+        # Read the report content
+        report_content = report_file.read_text()
+
         # Send the report
-        send_report(str(report), [recipient])
+        send_report(report_content, [recipient])
         print(f"✓ Mail sent to {recipient}")
 
     except Exception as e:
