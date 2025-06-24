@@ -33,7 +33,7 @@ def test_html_rendering():
         output_file.parent.mkdir(exist_ok=True)
         output_file.write_text(html_content, encoding="utf-8")
         
-        print(f"✓ HTML email content generated successfully")
+        print("✓ HTML email content generated successfully")
         print(f"✓ Output saved to: {output_file}")
         
         # Check if CSS was inlined (should contain style attributes)

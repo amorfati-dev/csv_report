@@ -38,9 +38,9 @@ def test_html_template():
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(html_output)
     
-    print(f"✅ Template rendered successfully!")
+    print("✅ Template rendered successfully!")
     print(f"📄 Output saved to: {output_file}")
-    print(f"🌐 Open the file in your browser to view the report")
+    print("🌐 Open the file in your browser to view the report")
     print(f"📊 Data loaded from: {dummy_file}")
     
     return output_file

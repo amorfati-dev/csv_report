@@ -42,7 +42,7 @@ def render(report_date: str):
         return
     except json.JSONDecodeError as e:
         print(f"❌ JSON decode error: {e}")
-        print(f"📄 File content:")
+        print("📄 File content:")
         with open(data_file, 'r', encoding='utf-8') as f:
             print(f.read())
         return

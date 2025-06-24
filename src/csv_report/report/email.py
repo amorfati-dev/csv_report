@@ -12,7 +12,6 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from typing import Optional, List
 from dotenv import load_dotenv
-from premailer import Premailer
 
 # Load environment variables from .env file
 load_dotenv()
