@@ -1,12 +1,33 @@
 import json
 import pathlib
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from premailer import Premailer
 
 BASE_DIR = pathlib.Path(__file__).parent
 env = Environment(
     loader=FileSystemLoader(BASE_DIR),
     autoescape=select_autoescape()
 )
+
+def render_html_from_data(data: dict) -> str:
+    """Render HTML template with data and inline CSS for email compatibility.
+    
+    Args:
+        data: Dictionary containing data for template rendering
+        
+    Returns:
+        HTML string with inlined CSS
+    """
+    # Render template using email-specific template
+    tmpl = env.get_template("email_template.html")
+    html = tmpl.render(**data)
+    
+    # Process with premailer to inline CSS
+    p = Premailer(html=html, base_url=None)
+    inlined_html = p.transform()
+    
+    return inlined_html
+
 
 def render(report_date: str):
     """Render the HTML report with data from dummy.json."""
