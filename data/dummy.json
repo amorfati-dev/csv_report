@@ -1,0 +1,9 @@
+{
+    "report_date": "2025-06-23",
+    "kpis": [
+      {"name": "Umsatz", "value": "€ 12 345", "trend": "+5 %"},
+      {"name": "Patienten", "value": "87", "trend": "−3 %"},
+      {"name": "Ø Behandlungszeit", "value": "42 min", "trend": "±0 %"}
+    ]
+}
+  

@@ -1,17 +1,118 @@
-# S&P 500 Companies Analysis Report
+    ╔══════════════════════════════════════════════════════════════════════════════╗
+    ║                                                                              ║
+    ║    ███████╗██████╗     ██████╗ ██████╗ ██████╗ ██████╗ ███████╗████████╗    ║
+    ║    ██╔════╝██╔══██╗    ██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔════╝╚══██╔══╝    ║
+    ║    ███████╗██████╔╝    ██████╔╝██████╔╝██████╔╝██████╔╝█████╗     ██║       ║
+    ║    ╚════██║██╔═══╝     ██╔═══╝ ██╔═══╝ ██╔═══╝ ██╔═══╝ ██╔══╝     ██║       ║
+    ║    ███████║██║         ██║     ██║     ██║     ██║     ███████╗   ██║       ║
+    ║    ╚══════╝╚═╝         ╚═╝     ╚═╝     ╚═╝     ╚═╝     ╚══════╝   ╚═╝       ║
+    ║                                                                              ║
+    ║                        📊 MARKET ANALYSIS REPORT 📊                          ║
+    ║                                                                              ║
+    ║                    💰 $500 Companies • 📈 Market Insights 💰                 ║
+    ║                                                                              ║
+    ╚══════════════════════════════════════════════════════════════════════════════╝
 
-## Base KPIs
+# 📊 S&P 500 Companies Analysis Report
 
-- Total Companies: {{ base_kpis.total_companies }}
-- Average Market Cap: ${{ "{:,.2f}".format(base_kpis.avg_market_cap) }}
-- Median Market Cap: ${{ "{:,.2f}".format(base_kpis.median_market_cap) }}
+*Generated on {{ generated_at }}*
 
-## Sector Analysis
+---
 
+## 📈 Executive Summary
+
+The S&P 500 index contains **{{ base_kpis.total_companies }}** companies with a total market capitalization analysis revealing key insights about the composition of America's largest publicly traded companies.
+
+### Key Metrics
+- **Total Companies Analyzed**: {{ base_kpis.total_companies }}
+- **Average Market Cap**: ${{ "{:,.0f}".format(base_kpis.avg_market_cap) }}
+- **Median Market Cap**: ${{ "{:,.0f}".format(base_kpis.median_market_cap) }}
+
+---
+
+## 🏆 Top 10 Companies by Market Cap
+
+| Rank | Symbol | Company | Market Cap (Billions) | Sector |
+|------|--------|---------|----------------------|---------|
+{% for idx, row in enhanced_kpis.top_companies.iterrows() %}
+| {{ idx + 1 }} | **{{ row.Symbol }}** | {{ row.Shortname }} | ${{ "{:,.1f}".format(row.Marketcap_B) }}B | {{ row.Sector }} |
+{% endfor %}
+
+---
+
+## 💰 Market Cap Distribution Analysis
+
+### Company Size Breakdown
+- **Mega Cap** ($100B+): {{ enhanced_kpis.market_cap_distribution.mega_cap_count }} companies ({{ "{:.1f}".format(enhanced_kpis.market_cap_distribution.mega_cap_pct) }}%)
+- **Large Cap** ($10B-$100B): {{ enhanced_kpis.market_cap_distribution.large_cap_count }} companies ({{ "{:.1f}".format(enhanced_kpis.market_cap_distribution.large_cap_pct) }}%)
+- **Mid Cap** ($2B-$10B): {{ enhanced_kpis.market_cap_distribution.mid_cap_count }} companies ({{ "{:.1f}".format(enhanced_kpis.market_cap_distribution.mid_cap_pct) }}%)
+- **Small Cap** (<$2B): {{ enhanced_kpis.market_cap_distribution.small_cap_count }} companies ({{ "{:.1f}".format(enhanced_kpis.market_cap_distribution.small_cap_pct) }}%)
+
+### Market Cap Percentiles
+- **25th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles[0.25]) }}
+- **50th Percentile (Median)**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles[0.5]) }}
+- **75th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles[0.75]) }}
+- **90th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles[0.9]) }}
+- **95th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles[0.95]) }}
+- **99th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles[0.99]) }}
+
+---
+
+## 🏭 Sector Analysis
+
+### Top 5 Sectors by Total Market Cap
+| Rank | Sector | Total Market Cap | Companies | Avg Market Cap |
+|------|--------|------------------|-----------|----------------|
+{% for idx, row in enhanced_kpis.top_sectors_by_market_cap.iterrows() %}
+| {{ idx + 1 }} | **{{ row.Sector }}** | ${{ "{:,.0f}".format(row.total_market_cap) }} | {{ row.company_count }} | ${{ "{:,.0f}".format(row.avg_market_cap) }} |
+{% endfor %}
+
+### Complete Sector Breakdown
 {% for _, row in sector_kpis.iterrows() %}
-### {{ row.Sector }}
-- Number of Companies: {{ row.company_count }}
-- Average Market Cap: ${{ "{:,.2f}".format(row.avg_market_cap) }}
-- Median Market Cap: ${{ "{:,.2f}".format(row.median_market_cap) }}
+#### {{ row.Sector }}
+- **Companies**: {{ row.company_count }}
+- **Average Market Cap**: ${{ "{:,.0f}".format(row.avg_market_cap) }}
+- **Median Market Cap**: ${{ "{:,.0f}".format(row.median_market_cap) }}
 
-{% endfor %}   
+{% endfor %}
+
+---
+
+## 🚀 Technology vs Traditional Sectors
+
+### Technology Companies
+- **Count**: {{ enhanced_kpis.tech_vs_traditional.tech_companies }} companies
+- **Total Market Cap**: ${{ "{:,.0f}".format(enhanced_kpis.tech_vs_traditional.tech_market_cap) }}
+- **Average Market Cap**: ${{ "{:,.0f}".format(enhanced_kpis.tech_vs_traditional.tech_avg_market_cap) }}
+
+### Traditional Sectors
+- **Count**: {{ enhanced_kpis.tech_vs_traditional.traditional_companies }} companies
+- **Total Market Cap**: ${{ "{:,.0f}".format(enhanced_kpis.tech_vs_traditional.traditional_market_cap) }}
+- **Average Market Cap**: ${{ "{:.0f}".format(enhanced_kpis.tech_vs_traditional.traditional_avg_market_cap) }}
+
+### Key Insights
+- Technology companies represent **{{ "{:.1f}".format(enhanced_kpis.tech_vs_traditional.tech_companies / base_kpis.total_companies * 100) }}%** of S&P 500 companies
+- Average tech company market cap is **{{ "{:.1f}".format(enhanced_kpis.tech_vs_traditional.tech_avg_market_cap / enhanced_kpis.tech_vs_traditional.traditional_avg_market_cap) }}x** larger than traditional sectors
+
+---
+
+## 📊 Sector Rankings by Average Market Cap
+
+| Rank | Sector | Avg Market Cap | Companies | Total Market Cap |
+|------|--------|----------------|-----------|------------------|
+{% for idx, row in enhanced_kpis.sector_rankings.iterrows() %}
+| {{ idx + 1 }} | **{{ row.Sector }}** | ${{ "{:,.0f}".format(row.avg_market_cap) }} | {{ row.company_count }} | ${{ "{:,.0f}".format(row.total_market_cap) }} |
+{% endfor %}
+
+---
+
+## 🔍 Key Observations
+
+1. **Market Concentration**: The top 10 companies represent a significant portion of the total market cap
+2. **Sector Diversity**: The S&P 500 spans across multiple sectors with varying market cap distributions
+3. **Technology Dominance**: Technology and Communication Services sectors show higher average market caps
+4. **Size Distribution**: The index includes companies of all sizes, from small-cap to mega-cap
+
+---
+
+*Report generated by CSV Report Generator v1.0*   
