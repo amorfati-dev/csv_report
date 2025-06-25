@@ -43,7 +43,10 @@ def load_csv(
         return pd.read_csv(csv_file)
     elif url is not None:
         if not REQUESTS_AVAILABLE:
-            raise ImportError("requests library is required for URL loading. Install with: pip install requests")
+            raise ImportError(
+                "requests library is required for URL loading. "
+                "Install with: pip install requests"
+            )
         response = requests.get(url)
         response.raise_for_status()
         return pd.read_csv(StringIO(response.text))

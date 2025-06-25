@@ -5,6 +5,7 @@ import tempfile
 from pathlib import Path
 from csv_report.report.generate import generate_report, save_report
 
+
 def test_generate_report():
     """Test report generation."""
     # Create sample data
@@ -15,7 +16,6 @@ def test_generate_report():
         "Sector": ["Technology", "Technology", "Technology"],
     }
     df = pd.DataFrame(data)
-
 
     # Generate report
     report = generate_report(df)

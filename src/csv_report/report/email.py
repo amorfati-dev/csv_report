@@ -81,10 +81,10 @@ def send_html_report(
 
     # Import render function to generate HTML
     from .render import render_html_from_data
-    
+
     # Generate HTML with inlined CSS
     html_content = render_html_from_data(report_data)
-    
+
     # Create message
     msg = MIMEMultipart("alternative")
     msg["From"] = email_user

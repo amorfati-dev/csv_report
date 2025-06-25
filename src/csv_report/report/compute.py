@@ -53,7 +53,8 @@ def calculate_sector_kpis(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def calculate_enhanced_kpis(df: pd.DataFrame) -> Dict[str, Any]:
-    """Calculate enhanced KPIs including top companies, market cap distribution, and percentiles.
+    """Calculate enhanced KPIs including top companies, market cap distribution, and
+    percentiles.
 
     Args:
         df: DataFrame containing S&P 500 companies data
@@ -62,33 +63,41 @@ def calculate_enhanced_kpis(df: pd.DataFrame) -> Dict[str, Any]:
         Dictionary containing comprehensive analysis
     """
     # Top 10 companies by market cap
-    top_companies = df.nlargest(10, 'Marketcap')[['Symbol', 'Shortname', 'Marketcap', 'Sector']].copy()
-    top_companies['Marketcap_B'] = top_companies['Marketcap'] / 1e9  # Convert to billions
-    
+    top_companies = df.nlargest(10, 'Marketcap')[
+        ['Symbol', 'Shortname', 'Marketcap', 'Sector']
+    ].copy()
+    top_companies['Marketcap_B'] = (
+        top_companies['Marketcap'] / 1e9
+    )  # Convert to billions
+
     # Market cap percentiles
     percentiles = df['Marketcap'].quantile([0.25, 0.5, 0.75, 0.9, 0.95, 0.99])
-    
+
     # Market cap distribution (Small: <$2B, Mid: $2B-$10B, Large: >$10B)
     small_cap = df[df['Marketcap'] < 2e9]
     mid_cap = df[(df['Marketcap'] >= 2e9) & (df['Marketcap'] < 10e9)]
     large_cap = df[df['Marketcap'] >= 10e9]
     mega_cap = df[df['Marketcap'] >= 100e9]  # $100B+
-    
+
     # Sector rankings
     sector_rankings = df.groupby('Sector').agg({
         'Marketcap': ['mean', 'median', 'count', 'sum']
     }).round(2)
-    sector_rankings.columns = ['avg_market_cap', 'median_market_cap', 'company_count', 'total_market_cap']
-    sector_rankings = sector_rankings.sort_values('avg_market_cap', ascending=False).reset_index()
-    
+    sector_rankings.columns = [
+        'avg_market_cap', 'median_market_cap', 'company_count', 'total_market_cap'
+    ]
+    sector_rankings = sector_rankings.sort_values(
+        'avg_market_cap', ascending=False
+    ).reset_index()
+
     # Technology vs Traditional sectors
     tech_sectors = ['Technology', 'Communication Services']
     tech_companies = df[df['Sector'].isin(tech_sectors)]
     traditional_companies = df[~df['Sector'].isin(tech_sectors)]
-    
+
     # Sector concentration (top 5 sectors by market cap)
     top_sectors_by_market_cap = sector_rankings.nlargest(5, 'total_market_cap')
-    
+
     return {
         "top_companies": top_companies,
         "percentiles": percentiles,
