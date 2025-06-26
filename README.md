@@ -144,3 +144,36 @@ COPY src ./src
 CMD ["uvicorn", "kpi_service.app:app", "--host", "0.0.0.0", "--port", "8000"]
 
 
+## 🚀 Fly.io Deployment (Stand: 26 Jun 2025)
+
+**Live-URL:** [https://csv-report.fly.dev](https://csv-report.fly.dev)
+
+### Quick‑Deploy
+
+```bash
+# Einmalig initialisieren
+fly launch --dockerfile Dockerfile --name csv-report --region ams
+
+# Jedes weitere Update
+fly deploy
+
+# Health‑Check
+curl https://csv-report.fly.dev/healthz
+```
+
+### Aktueller Status
+
+| Build‑Basis        | Commit‑SHA | Health   | Region | Letzte Logs            |
+| ------------------ | ---------- | -------- | ------ | ---------------------- |
+| `python:3.12-slim` | `e1a701f`  | ✅ 200 OK | ams    | `fly logs` 26 Jun 2025 |
+
+> Fly.io stoppt inaktive Instanzen automatisch (Autostop). Das spart Credits, führt aber zu kurzen Kaltstarts (≈ 500 ms) beim ersten Request.
+
+### Changelog 26 Jun 2025
+
+* **Dockerfile** auf `python:3.12-slim` umgestellt.
+* **Health‑Check** Route `/healthz` implementiert.
+* **Erstes Production‑Deployment** auf Fly.io (Region AMS).
+* README um Deploy‑Sektion & Quick‑Start ergänzt.
+
+---
