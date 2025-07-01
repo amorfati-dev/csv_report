@@ -13,7 +13,12 @@ client = TestClient(app)
 
 
 def test_upload_ok() -> None:
-    csv = b"Symbol,Shortname,Sector,Marketcap\nAAPL,Apple Inc,Technology,3000000000000\nMSFT,Microsoft Corp,Technology,2500000000000\nGOOGL,Alphabet Inc,Communication Services,2000000000000"
+    csv = (
+        b"Symbol,Shortname,Sector,Marketcap\n"
+        b"AAPL,Apple Inc,Technology,3000000000000\n"
+        b"MSFT,Microsoft Corp,Technology,2500000000000\n"
+        b"GOOGL,Alphabet Inc,Communication Services,2000000000000"
+    )
     r = client.post("/upload", files={"file": ("demo.csv", csv, "text/csv")})
     assert r.status_code == 200
     assert r.json()["basic_kpis"]["rows"] == 3
