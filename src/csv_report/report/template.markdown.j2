@@ -92,7 +92,7 @@ The S&P 500 index contains **{{ base_kpis.total_companies }}** companies with a 
 
 ### Key Insights
 - Technology companies represent **{{ "{:.1f}".format(enhanced_kpis.tech_vs_traditional.tech_companies / base_kpis.total_companies * 100) }}%** of S&P 500 companies
-- Average tech company market cap is **{{ "{:.1f}".format(enhanced_kpis.tech_vs_traditional.tech_avg_market_cap / enhanced_kpis.tech_vs_traditional.traditional_avg_market_cap) }}x** larger than traditional sectors
+- Average tech company market cap is **{{ "{:.1f}".format(enhanced_kpis.tech_vs_traditional.tech_avg_market_cap / enhanced_kpis.tech_vs_traditional.traditional_avg_market_cap) if enhanced_kpis.tech_vs_traditional.traditional_avg_market_cap > 0 else "N/A" }}x** larger than traditional sectors
 
 ---
 
