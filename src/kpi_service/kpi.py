@@ -42,8 +42,8 @@ def calculate_base_kpis(df: pd.DataFrame) -> dict[str, Any]:
     """
     return {
         "total_companies": len(df),
-        "avg_market_cap": float(df["Marketcap"].mean()),
-        "median_market_cap": float(df["Marketcap"].median()),
+        "avg_market_cap": float(df["Marketcap"].mean()) if not df["Marketcap"].isna().all() else 0.0,
+        "median_market_cap": float(df["Marketcap"].median()) if not df["Marketcap"].isna().all() else 0.0,
     }
 
 
@@ -115,7 +115,7 @@ def calculate_enhanced_kpis(df: pd.DataFrame) -> dict[str, Any]:
 
     # Market cap percentiles
     percentiles_raw = df["Marketcap"].quantile([0.25, 0.5, 0.75, 0.9, 0.95, 0.99])
-    percentiles = {f"p{int(k*100)}": float(v) for k, v in percentiles_raw.items()}
+    percentiles = {f"p{int(k*100)}": float(v) if not pd.isna(v) else 0.0 for k, v in percentiles_raw.items()}
 
     # Market cap distribution (Small: <$2B, Mid: $2B-$10B, Large: >$10B)
     small_cap = df[df["Marketcap"] < 2e9]
@@ -189,12 +189,12 @@ def calculate_enhanced_kpis(df: pd.DataFrame) -> dict[str, Any]:
         "tech_vs_traditional": {
             "tech_companies": len(tech_companies),
             "traditional_companies": len(traditional_companies),
-            "tech_market_cap": float(tech_companies["Marketcap"].sum()),
-            "traditional_market_cap": float(traditional_companies["Marketcap"].sum()),
-            "tech_avg_market_cap": float(tech_companies["Marketcap"].mean()),
+            "tech_market_cap": float(tech_companies["Marketcap"].sum()) if len(tech_companies) > 0 else 0.0,
+            "traditional_market_cap": float(traditional_companies["Marketcap"].sum()) if len(traditional_companies) > 0 else 0.0,
+            "tech_avg_market_cap": float(tech_companies["Marketcap"].mean()) if len(tech_companies) > 0 else 0.0,
             "traditional_avg_market_cap": float(
                 traditional_companies["Marketcap"].mean(),
-            ),
+            ) if len(traditional_companies) > 0 else 0.0,
         },
         "top_sectors_by_market_cap": top_sectors_by_market_cap,
     }

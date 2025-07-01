@@ -1,16 +1,22 @@
 # src/kpi_service/tests/test_api.py
 from fastapi.testclient import TestClient
 
-from kpi_service.app import app  # Pfad ggf. anpassen
+import sys
+from pathlib import Path
+
+# Add the src directory to the path
+sys.path.append(str(Path(__file__).parent.parent.parent))
+
+from kpi_service.app import app
 
 client = TestClient(app)
 
 
 def test_upload_ok() -> None:
-    csv = b"a,b\n1,2\n"
+    csv = b"Symbol,Shortname,Sector,Marketcap\nAAPL,Apple Inc,Technology,3000000000000\nMSFT,Microsoft Corp,Technology,2500000000000\nGOOGL,Alphabet Inc,Communication Services,2000000000000"
     r = client.post("/upload", files={"file": ("demo.csv", csv, "text/csv")})
     assert r.status_code == 200
-    assert r.json()["kpis"]["rows"] == 1
+    assert r.json()["basic_kpis"]["rows"] == 3
 
 
 def test_wrong_extension() -> None:
