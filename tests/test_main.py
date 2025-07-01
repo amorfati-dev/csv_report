@@ -1,5 +1,6 @@
 """Tests for the main module."""
 
+import pytest
 from typer.testing import CliRunner
 
 from csv_report.main import app
@@ -7,7 +8,6 @@ from csv_report.main import app
 
 def test_generate_command_help() -> None:
     """Test that the generate command shows help."""
-    import pytest
     runner = CliRunner()
     try:
         result = runner.invoke(app, ["generate", "--help"])
@@ -24,7 +24,6 @@ def test_generate_command_help() -> None:
 
 def test_show_runs_command_help() -> None:
     """Test that the show-runs command shows help."""
-    import pytest
     runner = CliRunner()
     try:
         result = runner.invoke(app, ["show-runs", "--help"])
@@ -41,7 +40,6 @@ def test_show_runs_command_help() -> None:
 
 def test_init_db_command_help() -> None:
     """Test that the init-db command shows help."""
-    import pytest
     runner = CliRunner()
     try:
         result = runner.invoke(app, ["init-db", "--help"])
