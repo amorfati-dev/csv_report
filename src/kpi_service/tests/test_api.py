@@ -1,8 +1,8 @@
 # src/kpi_service/tests/test_api.py
-from fastapi.testclient import TestClient
-
 import sys
 from pathlib import Path
+
+from fastapi.testclient import TestClient
 
 # Add the src directory to the path
 sys.path.append(str(Path(__file__).parent.parent.parent))
