@@ -4,7 +4,7 @@ This module provides comprehensive KPI calculation functions for analyzing
 CSV data, particularly focused on S&P 500 companies data.
 """
 
-from typing import Any, Dict
+from typing import Any
 
 import pandas as pd
 
@@ -27,7 +27,7 @@ def compute_kpis(df: pd.DataFrame) -> dict:
     }
 
 
-def calculate_base_kpis(df: pd.DataFrame) -> Dict[str, Any]:
+def calculate_base_kpis(df: pd.DataFrame) -> dict[str, Any]:
     """Calculate base KPIs for the entire dataset.
 
     Args:
@@ -81,7 +81,7 @@ def calculate_sector_kpis(df: pd.DataFrame) -> dict[str, Any]:
     return {"sectors": sectors}
 
 
-def calculate_enhanced_kpis(df: pd.DataFrame) -> Dict[str, Any]:
+def calculate_enhanced_kpis(df: pd.DataFrame) -> dict[str, Any]:
     """Calculate enhanced KPIs including top companies, market cap distribution, and
     percentiles.
 
@@ -200,7 +200,7 @@ def calculate_enhanced_kpis(df: pd.DataFrame) -> Dict[str, Any]:
     }
 
 
-def compute_all_kpis(df: pd.DataFrame) -> Dict[str, Any]:
+def compute_all_kpis(df: pd.DataFrame) -> dict[str, Any]:
     """Compute all KPIs and return them in a structured format.
 
     Args:
