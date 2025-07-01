@@ -7,7 +7,7 @@ name = "csv_report"
 version = "0.1.0"
 description = "Tiny CLI that loads a CSV, analyses it and optionally e-mails a report."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "pandas>=2.1",
     "jinja2>=3.0.0",
