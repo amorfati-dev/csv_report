@@ -11,4 +11,4 @@ sys.path.insert(0, str(src_path))
 from csv_report.db_init import main
 
 if __name__ == "__main__":
-    main() 
+    main()

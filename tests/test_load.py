@@ -1,11 +1,12 @@
 """Tests for the load module."""
 
-import pytest
 import pandas as pd
+import pytest
+
 from csv_report.load import load_csv
 
 
-def test_load_default_csv():
+def test_load_default_csv() -> None:
     """Test loading default CSV file."""
     # Create sample data
     data = {
@@ -28,7 +29,7 @@ def test_load_default_csv():
     assert "Apple" in loaded_df["Shortname"].values
 
 
-def test_load_csv_from_url():
+def test_load_csv_from_url() -> None:
     """Test loading CSV from URL."""
     # Create sample data
     data = {
@@ -51,7 +52,7 @@ def test_load_csv_from_url():
     assert "Apple" in loaded_df["Shortname"].values
 
 
-def test_load_invalid_file():
+def test_load_invalid_file() -> None:
     """Test loading invalid file."""
     with pytest.raises(FileNotFoundError):
         load_csv("nonexistent.csv")

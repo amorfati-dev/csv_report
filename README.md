@@ -1,179 +1,345 @@
-# csv_report
+# CSV Report Generator
 
-Kleines CLI-Tool, das CSV-Daten auswertet und einen Report mailt.
+A comprehensive CLI tool and FastAPI service for analyzing CSV data, generating reports, and tracking performance metrics.
 
-## Quick-Start
+## Features
 
-### 1. Installation (als End-User)
-
-> Voraussetzung: **Python ≥ 3.12** ist installiert.
-
-```bash
-# Empfohlen – sauber isoliert per pipx
-python3 -m pip install --user pipx
-pipx ensurepath
-pipx install csv-report
-
-<details> <summary>Alternative: Poetry-basierte Entwicklungsversion (Editable Install)</summary>
-git clone https://github.com/amorfati-dev/csv_report
-cd csv_report
-poetry install             # installiert Dependencies + das Paket selbst
-poetry run csv-report --help
-</details>
-
-
-2. pipErster Report
-csv-report \
-  --csv-file examples/sales_q1.csv \
-  --output-format html \
-  > report.html
-
-  | Option            | Bedeutung                        |
-| ----------------- | -------------------------------- |
-| `--csv-file`      | Pfad zur Eingabe-CSV             |
-| `--output-format` | `markdown` (Default) oder `html` |
-
-
-Mail-Versand aktivieren:
-Lege eine .env an (oder setze Umgebungs­variablen)<br>
-EMAIL_USER, EMAIL_PASSWORD, EMAIL_TO – danach wird die generierte Datei per Gmail versendet.
-
-3. Hilfe anzeigen
-
-csv-report --help
-
-
----
-
-## 2 — Commit & Push
-
-```bash
-git add README.md
-git commit -m "docs: add Quick-Start section with install & usage"
-git push origin main
-
-
-
-## Installation
-
-1. Clone the repository:
-   ```bash
-   git clone <your-repo-url>
-   cd csv_report
-   ```
-2. Create and activate a virtual environment:
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   ```
-3. Install dependencies in editable mode:
-   ```bash
-   pip install -e . --break-system-packages
-   ```
-
-## Usage
-
-Run the CLI tool with:
-```bash
-csv_report --csv data/sp500_companies.csv
-```
-
-## Requirements
-- Python 3.9+
-- pandas
-
-## Example Output
-```
-Report for S&P 500 Companies
--------------------------------------------
-Total Companies: 503
-Top Companies:
-  Symbol              Shortname      Marketcap
-0   AAPL             Apple Inc.  3745241628672
-1   NVDA     NVIDIA Corporation  3307864588288
-2   MSFT  Microsoft Corporation  3296105332736
-3   AMZN       Amazon.com, Inc.  2366295506944
-4  GOOGL          Alphabet Inc.  2276776214528
-Sector Distribution:
-Sector
-Technology            82
-Industrials           70
-Financial Services    67
-Healthcare            63
-Consumer Cyclical     55
-Name: count, dtype: int64
-```
-
-# CSV-KPI-Service
-
-Minimaler FastAPI-Microservice, der eine hochgeladene CSV analysiert und Key-Performance-Indikatoren (KPIs) als JSON zurückgibt.
+- **CLI Tool**: Generate reports from CSV files with database tracking
+- **FastAPI Service**: REST API for CSV analysis and run history
+- **Database Persistence**: Store run metadata and calculated KPIs
+- **Multiple Output Formats**: Markdown and HTML reports
+- **Email Integration**: Send reports via email (optional)
 
 ## Quick Start
 
+### CLI Tool
+
 ```bash
-# 1) Environment starten
-poetry install
-poetry run uvicorn kpi_service.app:app --reload
+# Install
+pip install csv-report
 
-# 2) Datei hochladen
-curl -F "file=@sample.csv" http://127.0.0.1:8000/upload
+# Generate a report
+csv-report generate --csv-file data/sp500_companies.csv --output-format html
 
+# View recent runs
+csv-report show-runs --limit 5
+
+# View specific run details
+csv-report show-runs --run-id 1
+```
+
+### FastAPI Service
+
+```bash
+# Start the service
+uvicorn kpi_service.app:app --reload
+
+# Upload CSV for analysis
+curl -F "file=@data/sp500_companies.csv" http://127.0.0.1:8000/upload
+
+# Get run history
+curl http://127.0.0.1:8000/runs
+
+# Get specific run details
+curl http://127.0.0.1:8000/runs?run_id=1
+```
+
+## Data Flow
+
+```mermaid
+graph TD
+    A[CSV File] --> B[CLI Tool]
+    A --> C[FastAPI Service]
+    
+    B --> D[Load & Parse CSV]
+    D --> E[Calculate KPIs]
+    E --> F[Generate Report]
+    F --> G[Save Report File]
+    E --> H[Save to Database]
+    H --> I[Run Metadata]
+    H --> J[KPI Records]
+    
+    C --> K[Upload Endpoint]
+    K --> L[Quick KPI Analysis]
+    L --> M[Return JSON]
+    
+    N[Database] --> O[/runs Endpoint]
+    O --> P[Return Run History]
+    
+    subgraph "Database Tables"
+        I
+        J
+    end
+    
+    subgraph "CLI Pipeline"
+        D
+        E
+        F
+        G
+        H
+    end
+    
+    subgraph "FastAPI Endpoints"
+        K
+        L
+        M
+        O
+        P
+    end
+```
+
+## CLI Commands
+
+### `generate`
+Generate a report from CSV data and store run metadata in database.
+
+```bash
+csv-report generate [OPTIONS]
+
+Options:
+  --csv-file, -f TEXT     Path to the CSV file to analyze
+  --output-format, -o     Format of the output report [markdown|html]
+  --output TEXT           Output file path (default: reports/sp500_analysis.{format})
+```
+
+### `show-runs`
+Display recent report generation runs from the database.
+
+```bash
+csv-report show-runs [OPTIONS]
+
+Options:
+  --limit, -l INTEGER     Number of recent runs to show [default: 10]
+  --run-id, -r INTEGER    Show details for a specific run ID
+```
+
+### `init-db`
+Initialize the database and create tables.
+
+```bash
+csv-report init-db
+```
+
+## FastAPI Endpoints
+
+### `POST /upload`
+Upload a CSV file for quick KPI analysis.
+
+**Request:**
+```bash
+curl -F "file=@data.csv" http://127.0.0.1:8000/upload
+```
+
+**Response:**
+```json
 {
-  "rows": 503,
-  "cols": 16,
-  "means": {
-    "Currentprice": 227.4,
-    "Marketcap": 112231944591.01
+  "filename": "data.csv",
+  "kpis": {
+    "rows": 503,
+    "cols": 16,
+    "means": {
+      "Currentprice": 227.4,
+      "Marketcap": 112231944591.01
+    }
   }
 }
+```
 
-poetry run pytest -q
+### `GET /runs`
+Get CSV report generation runs from the database.
 
+**Query Parameters:**
+- `limit` (optional): Number of runs to return (default: 10)
+- `run_id` (optional): Get details for specific run ID
 
-poetry run black .
-poetry run ruff check .
+**Response (list):**
+```json
+{
+  "runs": [
+    {
+      "id": 1,
+      "timestamp": "2025-01-01T12:00:00",
+      "csv_file": "sp500_companies.csv",
+      "output_format": "html",
+      "status": "completed",
+      "rows_processed": 503,
+      "error_message": null
+    }
+  ],
+  "total_count": 1
+}
+```
 
+**Response (specific run):**
+```json
+{
+  "run": {
+    "id": 1,
+    "timestamp": "2025-01-01T12:00:00",
+    "csv_file": "sp500_companies.csv",
+    "output_format": "html",
+    "status": "completed",
+    "rows_processed": 503,
+    "error_message": null
+  },
+  "kpis": [
+    {
+      "name": "total_companies",
+      "value": 503.0,
+      "unit": "companies",
+      "description": "Total number of companies in the dataset",
+      "calculated_at": "2025-01-01T12:00:00"
+    }
+  ]
+}
+```
 
-FROM python:3.12-slim
-WORKDIR /app
-COPY pyproject.toml poetry.lock ./
-RUN pip install --no-cache-dir poetry \
- && poetry config virtualenvs.create false \
- && poetry install --no-interaction --no-dev
-COPY src ./src
-CMD ["uvicorn", "kpi_service.app:app", "--host", "0.0.0.0", "--port", "8000"]
+### `GET /healthz`
+Health check endpoint for container monitoring.
 
+**Response:**
+```json
+{
+  "status": "healthy",
+  "service": "csv-kpi-service"
+}
+```
 
-## 🚀 Fly.io Deployment (Stand: 26 Jun 2025)
+## Database Schema
 
-**Live-URL:** [https://csv-report.fly.dev](https://csv-report.fly.dev)
+### Run Table
+Stores metadata about each CSV report generation run.
 
-### Quick‑Deploy
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INTEGER | Primary key |
+| timestamp | DATETIME | When the run was executed |
+| csv_file | TEXT | Path to the input CSV file |
+| output_format | TEXT | Report format (markdown/html) |
+| status | TEXT | Run status (processing/completed/failed) |
+| rows_processed | INTEGER | Number of rows processed |
+| error_message | TEXT | Error message if failed |
+
+### KPI Table
+Stores calculated key performance indicators for each run.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INTEGER | Primary key |
+| run_id | INTEGER | Foreign key to run table |
+| name | TEXT | KPI name |
+| value | FLOAT | Calculated value |
+| unit | TEXT | Unit of measurement |
+| description | TEXT | Description of the KPI |
+| calculated_at | DATETIME | When the KPI was calculated |
+
+## Calculated KPIs
+
+The system automatically calculates and stores the following KPIs:
+
+### Base KPIs
+- `total_companies`: Total number of companies
+- `avg_market_cap`: Average market capitalization
+- `median_market_cap`: Median market capitalization
+
+### Market Cap Distribution
+- `small_cap_count`: Companies with <$2B market cap
+- `mid_cap_count`: Companies with $2B-$10B market cap
+- `large_cap_count`: Companies with $10B-$100B market cap
+- `mega_cap_count`: Companies with >$100B market cap
+
+### Sector Analysis
+- `tech_companies`: Number of technology sector companies
+- `tech_market_cap`: Total market cap of technology companies
+
+## CI/CD Pipeline
+
+This project uses GitHub Actions for continuous integration and deployment.
+
+### Automated Checks
+
+Every push and pull request triggers:
+
+- **Code Formatting**: Black ensures consistent code style
+- **Linting**: Ruff checks for code quality and potential issues
+- **Security Scanning**: Bandit and Safety check for vulnerabilities
+- **Testing**: Pytest runs all tests with coverage reporting
+- **FastAPI Tests**: Separate test suite for API endpoints
+- **Docker Build**: Automated container builds for main branch
+
+### Local Development
+
+Install pre-commit hooks for local quality assurance:
 
 ```bash
-# Einmalig initialisieren
-fly launch --dockerfile Dockerfile --name csv-report --region ams
+# Install pre-commit
+poetry install --with dev
 
-# Jedes weitere Update
+# Install git hooks
+pre-commit install
+
+# Run all checks manually
+pre-commit run --all-files
+```
+
+### Manual Checks
+
+```bash
+# Format code
+poetry run black .
+
+# Lint code
+poetry run ruff check .
+
+# Check security
+poetry run bandit -r src/
+poetry run safety check
+
+# Run tests
+poetry run pytest --cov=src tests/
+```
+
+## Installation
+
+### Development Setup
+
+```bash
+# Clone repository
+git clone <your-repo-url>
+cd csv_report
+
+# Install dependencies
+poetry install
+
+# Initialize database
+poetry run csv-report init-db
+
+# Run tests
+poetry run pytest
+```
+
+### Production Deployment
+
+The service is deployed on Fly.io at [https://csv-report.fly.dev](https://csv-report.fly.dev).
+
+```bash
+# Deploy updates
 fly deploy
 
-# Health‑Check
+# Check health
 curl https://csv-report.fly.dev/healthz
 ```
 
-### Aktueller Status
+## Requirements
 
-| Build‑Basis        | Commit‑SHA | Health   | Region | Letzte Logs            |
-| ------------------ | ---------- | -------- | ------ | ---------------------- |
-| `python:3.12-slim` | `e1a701f`  | ✅ 200 OK | ams    | `fly logs` 26 Jun 2025 |
+- Python 3.12+
+- pandas
+- sqlmodel
+- fastapi
+- typer
+- rich
+- jinja2
 
-> Fly.io stoppt inaktive Instanzen automatisch (Autostop). Das spart Credits, führt aber zu kurzen Kaltstarts (≈ 500 ms) beim ersten Request.
+## License
 
-### Changelog 26 Jun 2025
-
-* **Dockerfile** auf `python:3.12-slim` umgestellt.
-* **Health‑Check** Route `/healthz` implementiert.
-* **Erstes Production‑Deployment** auf Fly.io (Region AMS).
-* README um Deploy‑Sektion & Quick‑Start ergänzt.
-
----
+MIT License

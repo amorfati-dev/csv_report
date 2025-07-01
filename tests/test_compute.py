@@ -1,10 +1,11 @@
 """Tests for the compute module."""
 
 import pandas as pd
+
 from csv_report.report.compute import calculate_base_kpis, calculate_sector_kpis
 
 
-def test_calculate_base_kpis():
+def test_calculate_base_kpis() -> None:
     """Test calculation of base KPIs."""
     # Create sample data
     data = {
@@ -24,7 +25,7 @@ def test_calculate_base_kpis():
     assert kpis["median_market_cap"] == 1800000000000
 
 
-def test_calculate_sector_kpis():
+def test_calculate_sector_kpis() -> None:
     """Test calculation of sector KPIs."""
     # Create sample data
     data = {

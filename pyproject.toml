@@ -32,9 +32,12 @@ where = ["src"]
 pytest-cov = "^6.2.1"
 black = "^25.1.0"
 ruff = "^0.11.13"
+bandit = "^1.7.5"
+safety = "^2.3.5"
+pre-commit = "^3.6.0"
 
-[project.scripts]          # ❷ CLI-Eintrag
-csv_report = "csv_report.main:main"
+[tool.poetry.scripts]
+csv-report = "csv_report.main:app"
 
 [project.optional-dependencies]
 dev = [

@@ -1,0 +1,71 @@
+# Ruff configuration file
+# See: https://docs.astral.sh/ruff/configuration/
+
+# Target Python version
+target-version = "py39"
+
+# Line length (same as black)
+line-length = 88
+
+# Enable all rules by default
+select = ["ALL"]
+
+# Ignore specific rules that are too strict for this project
+ignore = [
+    "E501",  # Line too long (handled by black)
+    "B008",  # Do not perform function calls in argument defaults
+    "C901",  # Function is too complex
+    "PLR0913",  # Too many arguments to function call
+    "PLR0915",  # Too many statements
+    "PLR0912",  # Too many branches
+    "PLR0911",  # Too many return statements
+    "PLR2004",  # Magic value used in comparison
+    "S101",  # Use of assert detected (fine in tests)
+    "S105",  # Possible hardcoded password (fine in tests)
+    "B017",  # Do not assert blind exception (fine in tests)
+    "PT011",  # pytest.raises too broad (fine in tests)
+    "BLE001",  # Do not catch blind exception (fine in tests)
+    "S113",  # Probable use of requests call without timeout (fine in tests)
+    "EXE001",  # Shebang is present but file is not executable
+    "D100",  # Missing docstring in public module (fine in tests)
+    "D103",  # Missing docstring in public function (fine in tests)
+    "D104",  # Missing docstring in public package (style preference)
+    "D107",  # Missing docstring in `__init__` (style preference)
+    "D401",  # First line of docstring should be in imperative mood (style preference)
+    "D106",  # Missing docstring in public nested class (style preference)
+    "D205",  # 1 blank line required between summary line and description (style preference)
+    "PD901",  # Avoid using the generic variable name `df` for DataFrames (style preference)
+    "PD011",  # Use `.to_numpy()` instead of `.values` (legacy pandas)
+    "PTH123",  # `open()` should be replaced by `Path.open()` (legacy code)
+    "PTH118",  # `os.path.join()` should be replaced by `Path` with `/` operator (legacy code)
+    "PTH103",  # `os.makedirs()` should be replaced by `Path.mkdir(parents=True)` (legacy code)
+    "FA100",  # Add `from __future__ import annotations` to simplify `typing.Optional`
+    "TRY300",  # Consider moving this statement to an `else` block (style preference)
+    "TRY203",  # Remove exception handler; error is immediately re-raised (style preference)
+    "TRY301",  # Abstract `raise` to an inner function (style preference)
+    "B904",  # Within an `except` clause, raise exceptions with `raise` from `e` (style preference)
+    "RUF012",  # Mutable class attributes should be annotated with `typing.ClassVar` (style preference)
+    "S701",  # By default, jinja2 sets `autoescape` to `False` (style preference)
+    "DTZ005",  # `datetime.datetime.now()` called without a `tz` argument (style preference)
+    "INP001",  # File is part of an implicit namespace package (style preference)
+    "ANN001",  # Missing type annotation for function argument (fine in tests)
+    "ANN201",  # Missing return type annotation for public function (fine in tests)
+    "E402",  # Module level import not at top of file (needed for init_db.py)
+]
+
+# Exclude specific files/directories
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "build",
+    "dist",
+    "*.egg-info",
+]
+
+# Allow autofix for all enabled rules
+fixable = ["ALL"]
+
+# Unfixable rules
+unfixable = [] 

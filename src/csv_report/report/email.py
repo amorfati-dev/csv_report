@@ -6,21 +6,21 @@ This module provides functions to send generated reports via email.
 from __future__ import annotations
 
 import os
-from pathlib import Path
 import smtplib
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from typing import Optional, List
+from email.mime.text import MIMEText
+from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
 
-__all__ = ["send_report", "send_html_report"]
+__all__ = ["send_html_report", "send_report"]
 
 
 def send_report(
-    report: str, recipients: List[str], subject: Optional[str] = None
+    report: str, recipients: list[str], subject: str | None = None,
 ) -> None:
     """Send a report via email.
 
@@ -32,13 +32,15 @@ def send_report(
     Raises:
         ValueError: If email credentials are missing
         smtplib.SMTPException: If email sending fails
+
     """
     # Get email credentials from environment
     email_user = os.getenv("EMAIL_USER")
     email_password = os.getenv("EMAIL_PASSWORD")
 
     if not email_user or not email_password:
-        raise ValueError("Missing EMAIL_USER / EMAIL_PASSWORD")
+        msg = "Missing EMAIL_USER / EMAIL_PASSWORD"
+        raise ValueError(msg)
 
     # Create message
     msg = MIMEMultipart()
@@ -55,11 +57,12 @@ def send_report(
             server.login(email_user, email_password)
             server.send_message(msg)
     except smtplib.SMTPException as e:
-        raise smtplib.SMTPException(f"Failed to send email: {e}")
+        msg = f"Failed to send email: {e}"
+        raise smtplib.SMTPException(msg)
 
 
 def send_html_report(
-    report_data: dict, recipients: List[str], subject: Optional[str] = None
+    report_data: dict, recipients: list[str], subject: str | None = None,
 ) -> None:
     """Send an HTML report via email with inlined CSS.
 
@@ -71,13 +74,15 @@ def send_html_report(
     Raises:
         ValueError: If email credentials are missing
         smtplib.SMTPException: If email sending fails
+
     """
     # Get email credentials from environment
     email_user = os.getenv("EMAIL_USER")
     email_password = os.getenv("EMAIL_PASSWORD")
 
     if not email_user or not email_password:
-        raise ValueError("Missing EMAIL_USER / EMAIL_PASSWORD")
+        msg = "Missing EMAIL_USER / EMAIL_PASSWORD"
+        raise ValueError(msg)
 
     # Import render function to generate HTML
     from .render import render_html_from_data
@@ -100,7 +105,8 @@ def send_html_report(
             server.login(email_user, email_password)
             server.send_message(msg)
     except smtplib.SMTPException as e:
-        raise smtplib.SMTPException(f"Failed to send HTML email: {e}")
+        msg = f"Failed to send HTML email: {e}"
+        raise smtplib.SMTPException(msg)
 
 
 def main() -> None:
@@ -113,17 +119,16 @@ def main() -> None:
         # Get recipient email from environment variable
         recipient = os.getenv("REPORT_RECIPIENT")
         if not (report_file.exists() and recipient):
-            raise SystemExit("Report or REPORT_RECIPIENT missing.")
+            msg = "Report or REPORT_RECIPIENT missing."
+            raise SystemExit(msg)
 
         # Read the report content
         report_content = report_file.read_text()
 
         # Send the report
         send_report(report_content, [recipient])
-        print(f"✓ Mail sent to {recipient}")
 
-    except Exception as e:
-        print(f"Error sending report: {e}")
+    except Exception:
         raise
 
 
