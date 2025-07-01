@@ -136,7 +136,8 @@ def calculate_enhanced_kpis(df: pd.DataFrame) -> Dict[str, Any]:
         "total_market_cap",
     ]
     sector_rankings_df = sector_rankings_df.sort_values(
-        "avg_market_cap", ascending=False,
+        "avg_market_cap",
+        ascending=False,
     ).reset_index()
 
     # Convert to list of dictionaries for JSON serialization

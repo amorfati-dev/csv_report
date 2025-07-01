@@ -24,7 +24,8 @@ __all__ = ["load_csv"]
 
 
 def load_csv(
-    csv_file: str | Path | None = None, url: str | None = None,
+    csv_file: str | Path | None = None,
+    url: str | None = None,
 ) -> pd.DataFrame:
     """Load S&P 500 companies data from CSV file or URL.
 

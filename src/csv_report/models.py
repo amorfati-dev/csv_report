@@ -17,10 +17,12 @@ class Run(SQLModel, table=True):
     output_format: str = Field(description="Output format (markdown, html)")
     status: str = Field(default="completed", description="Status of the run")
     rows_processed: Optional[int] = Field(
-        default=None, description="Number of rows processed",
+        default=None,
+        description="Number of rows processed",
     )
     error_message: Optional[str] = Field(
-        default=None, description="Error message if failed",
+        default=None,
+        description="Error message if failed",
     )
 
     class Config:
@@ -49,7 +51,8 @@ class Kpi(SQLModel, table=True):
     value: float = Field(description="Calculated value of the KPI")
     unit: Optional[str] = Field(default=None, description="Unit of measurement")
     description: Optional[str] = Field(
-        default=None, description="Description of what this KPI measures",
+        default=None,
+        description="Description of what this KPI measures",
     )
     calculated_at: datetime = Field(default_factory=datetime.utcnow)
 

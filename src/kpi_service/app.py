@@ -51,7 +51,8 @@ async def get_runs(limit: Optional[int] = 10, run_id: Optional[int] = None):
         run = db_service.get_run_by_id(run_id)
         if not run:
             raise HTTPException(
-                status_code=404, detail=f"Run with ID {run_id} not found",
+                status_code=404,
+                detail=f"Run with ID {run_id} not found",
             )
 
         # Get KPIs for this run

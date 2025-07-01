@@ -21,7 +21,10 @@ console = Console()
 @app.command()
 def generate(
     csv_file: Optional[str] = typer.Option(
-        None, "--csv-file", "-f", help="Path to the CSV file to analyze",
+        None,
+        "--csv-file",
+        "-f",
+        help="Path to the CSV file to analyze",
     ),
     output_format: str = typer.Option(
         "markdown",
@@ -194,10 +197,16 @@ def generate(
 @app.command()
 def show_runs(
     limit: int = typer.Option(
-        10, "--limit", "-l", help="Number of recent runs to show",
+        10,
+        "--limit",
+        "-l",
+        help="Number of recent runs to show",
     ),
     run_id: Optional[int] = typer.Option(
-        None, "--run-id", "-r", help="Show details for a specific run ID",
+        None,
+        "--run-id",
+        "-r",
+        help="Show details for a specific run ID",
     ),
 ) -> None:
     """Show recent report generation runs from the database."""
@@ -235,7 +244,10 @@ def show_runs(
 
             for kpi in kpis:
                 kpi_table.add_row(
-                    kpi.name, str(kpi.value), kpi.unit or "", kpi.description or "",
+                    kpi.name,
+                    str(kpi.value),
+                    kpi.unit or "",
+                    kpi.description or "",
                 )
             console.print(kpi_table)
         else:

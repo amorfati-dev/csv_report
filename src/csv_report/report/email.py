@@ -20,7 +20,9 @@ __all__ = ["send_html_report", "send_report"]
 
 
 def send_report(
-    report: str, recipients: list[str], subject: str | None = None,
+    report: str,
+    recipients: list[str],
+    subject: str | None = None,
 ) -> None:
     """Send a report via email.
 
@@ -62,7 +64,9 @@ def send_report(
 
 
 def send_html_report(
-    report_data: dict, recipients: list[str], subject: str | None = None,
+    report_data: dict,
+    recipients: list[str],
+    subject: str | None = None,
 ) -> None:
     """Send an HTML report via email with inlined CSS.
 
