@@ -37,8 +37,8 @@ def test_generate_command_with_options(runner) -> None:
     """Test generate command with various options."""
     result = runner.invoke(app, ["generate", "--help"])
     assert result.exit_code == 0
-    assert "--csv-file" in result.output
-    assert "--output-format" in result.output
+    assert "-csv-file" in result.output
+    assert "-output-format" in result.output
 
 
 def test_show_runs_no_runs(runner) -> None:
