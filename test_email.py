@@ -1,21 +1,24 @@
-from csv_report.email_sender import EmailSender
+import contextlib
 import os
+
 from dotenv import load_dotenv
+
+from csv_report.email_sender import EmailSender
 
 # Load environment variables
 load_dotenv()
 
 
-def test_email():
+def test_email() -> None:
     # Get email configuration from environment variables
     sender_email = os.getenv("EMAIL_USER")
     app_password = os.getenv("EMAIL_PASSWORD")
     recipient_email = os.getenv(
-        "RECIPIENT_EMAIL", sender_email
+        "RECIPIENT_EMAIL",
+        sender_email,
     )  # Default to sender if not specified
 
     if not all([sender_email, app_password]):
-        print("Error: Please set EMAIL_USER and EMAIL_PASSWORD in .env file")
         return
 
     # Create email sender instance
@@ -33,13 +36,12 @@ def test_email():
     </html>
     """
 
-    try:
+    with contextlib.suppress(Exception):
         email_sender.send_email(
-            recipient_email=recipient_email, subject=subject, body=body
+            recipient_email=recipient_email,
+            subject=subject,
+            body=body,
         )
-        print(f"Test email sent successfully to {recipient_email}")
-    except Exception as e:
-        print(f"Error sending email: {str(e)}")
 
 
 if __name__ == "__main__":

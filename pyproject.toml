@@ -15,7 +15,11 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "fastapi (>=0.115.13,<0.116.0)",
     "uvicorn[standard] (>=0.34.3,<0.35.0)",
-    "python-multipart (>=0.0.20,<0.0.21)"
+    "python-multipart (>=0.0.20,<0.0.21)",
+    "sqlmodel>=0.0.14",
+    "typer[all]>=0.9.0,<0.10.0",
+    "click<9.0.0",
+    "httpx>=0.24.0"
 ]
 
 [tool.setuptools]          # ❶ sagt: alle Pakete liegen unter src/
@@ -30,9 +34,14 @@ where = ["src"]
 pytest-cov = "^6.2.1"
 black = "^25.1.0"
 ruff = "^0.11.13"
+bandit = "^1.7.5"
+safety = "^2.3.5"
+pre-commit = "^3.6.0"
+typer = {extras = ["all"], version = "^0.9.0,<0.10.0"}
+flake8 = "^7.3.0"
 
-[project.scripts]          # ❷ CLI-Eintrag
-csv_report = "csv_report.main:main"
+[tool.poetry.scripts]
+csv-report = "csv_report.main:app"
 
 [project.optional-dependencies]
 dev = [

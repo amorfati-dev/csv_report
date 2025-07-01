@@ -1,11 +1,13 @@
 """Tests for the email module."""
 
 import os
+
 import pytest
+
 from csv_report.report.email import send_report
 
 
-def test_send_report_missing_credentials():
+def test_send_report_missing_credentials() -> None:
     """Test sending report with missing credentials."""
     # Clear environment variables
     os.environ.pop("EMAIL_USER", None)
@@ -16,7 +18,7 @@ def test_send_report_missing_credentials():
         send_report("Test report", ["test@example.com"])
 
 
-def test_send_report_success():
+def test_send_report_success() -> None:
     """Test successful report sending."""
     # Set up test credentials
     os.environ["EMAIL_USER"] = "test@example.com"
@@ -27,7 +29,7 @@ def test_send_report_success():
         send_report("Test report", ["recipient@example.com"])
 
 
-def test_send_report_success_with_env_vars():
+def test_send_report_success_with_env_vars() -> None:
     """Test successful report sending with environment variables."""
     # Set up test credentials
     os.environ["EMAIL_USER"] = "test@example.com"

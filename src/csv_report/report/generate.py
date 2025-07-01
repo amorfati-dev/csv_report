@@ -6,12 +6,19 @@ S&P 500 companies data using Jinja2 templates.
 
 from __future__ import annotations
 
-import pandas as pd
-from pathlib import Path
-from typing import Optional
+import sys
 from datetime import datetime
+from pathlib import Path
+from typing import TYPE_CHECKING
+
 from jinja2 import Environment, FileSystemLoader
-from .compute import calculate_base_kpis, calculate_enhanced_kpis
+
+# Add kpi_service to path and import
+sys.path.append(str(Path(__file__).parent.parent.parent))
+from kpi_service.kpi import calculate_base_kpis, calculate_enhanced_kpis
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 __all__ = ["generate_report", "save_report"]
 
@@ -24,6 +31,7 @@ def generate_report(df: pd.DataFrame) -> str:
 
     Returns:
         String containing the formatted report
+
     """
     if df.empty:
         return "No data available for analysis."
@@ -33,34 +41,31 @@ def generate_report(df: pd.DataFrame) -> str:
     enhanced_kpis = calculate_enhanced_kpis(df)
 
     # Legacy sector KPIs for backward compatibility
-    sector_kpis = df.groupby('Sector').agg({
-        'Shortname': 'count',
-        'Marketcap': ['mean', 'median']
-    }).round(2)
+    sector_kpis = (
+        df.groupby("Sector")
+        .agg({"Shortname": "count", "Marketcap": ["mean", "median"]})
+        .round(2)
+    )
 
     # Flatten column names
-    sector_kpis.columns = ['company_count', 'avg_market_cap', 'median_market_cap']
+    sector_kpis.columns = ["company_count", "avg_market_cap", "median_market_cap"]
     sector_kpis = sector_kpis.reset_index()
 
     # Load Jinja2 template
     template_dir = Path(__file__).parent
-    env = Environment(loader=FileSystemLoader(template_dir))
-    template = env.get_template('template.markdown.j2')
+    env = Environment(loader=FileSystemLoader(template_dir), autoescape=True)
+    template = env.get_template("template.markdown.j2")
 
     # Render template with data
-    report = template.render(
+    return template.render(
         base_kpis=base_kpis,
         sector_kpis=sector_kpis,
         enhanced_kpis=enhanced_kpis,
-        generated_at=datetime.now().strftime(
-            '%B %d, %Y at %I:%M:%S %p'
-        )
+        generated_at=datetime.now().strftime("%B %d, %Y at %I:%M:%S %p"),
     )
 
-    return report
 
-
-def save_report(report: str, output_file: Optional[Path] = None) -> Path:
+def save_report(report: str, output_file: Path | None = None) -> Path:
     """Save a report to a file.
 
     Args:
@@ -70,6 +75,7 @@ def save_report(report: str, output_file: Optional[Path] = None) -> Path:
 
     Returns:
         Path to the saved report file
+
     """
     if output_file is None:
         output_file = Path("reports/sp500_analysis.markdown")

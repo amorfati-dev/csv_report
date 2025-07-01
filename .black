@@ -1,0 +1,26 @@
+# Black configuration file
+# See: https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html
+
+# Line length
+line-length = 88
+
+# Target Python version
+target-version = ['py39']
+
+# Include specific files/directories
+include = '\.pyi?$'
+
+# Exclude specific files/directories
+exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+''' 

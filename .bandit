@@ -1,0 +1,17 @@
+# Bandit configuration file
+# See: https://bandit.readthedocs.io/en/latest/config.html
+
+# Skip specific tests
+skips: ['B101', 'B601']
+
+# Include only specific directories
+targets: ['src/']
+
+# Exclude specific files/directories
+exclude_dirs: ['tests/', '.venv/', 'venv/', '__pycache__/']
+
+# Set confidence levels
+confidence: ['HIGH', 'MEDIUM']
+
+# Set severity levels
+severity: ['HIGH', 'MEDIUM'] 

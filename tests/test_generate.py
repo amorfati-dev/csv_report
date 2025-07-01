@@ -1,12 +1,14 @@
 """Tests for the generate module."""
 
-import pandas as pd
 import tempfile
 from pathlib import Path
+
+import pandas as pd
+
 from csv_report.report.generate import generate_report, save_report
 
 
-def test_generate_report():
+def test_generate_report() -> None:
     """Test report generation."""
     # Create sample data
     data = {
@@ -27,13 +29,13 @@ def test_generate_report():
     assert "Alphabet" in report
 
 
-def test_save_report():
+def test_save_report() -> None:
     """Test saving report to file."""
     # Create test report
     report = "Test Report\n==========\n\nTest content."
 
     # Create temporary file for testing
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.markdown', delete=False) as tmp:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".markdown", delete=False) as tmp:
         tmp_path = Path(tmp.name)
 
     # Save report to temporary file
@@ -47,7 +49,7 @@ def test_save_report():
     output_file.unlink()
 
 
-def test_generate_report_empty_data():
+def test_generate_report_empty_data() -> None:
     """Test report generation with empty data."""
     # Create empty DataFrame
     df = pd.DataFrame()

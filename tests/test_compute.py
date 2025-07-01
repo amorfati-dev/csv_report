@@ -1,10 +1,11 @@
-"""Tests for the compute module."""
+"""Tests for the KPI computation module."""
 
 import pandas as pd
-from csv_report.report.compute import calculate_base_kpis, calculate_sector_kpis
+
+from kpi_service.kpi import calculate_base_kpis, calculate_sector_kpis
 
 
-def test_calculate_base_kpis():
+def test_calculate_base_kpis() -> None:
     """Test calculation of base KPIs."""
     # Create sample data
     data = {
@@ -24,7 +25,7 @@ def test_calculate_base_kpis():
     assert kpis["median_market_cap"] == 1800000000000
 
 
-def test_calculate_sector_kpis():
+def test_calculate_sector_kpis() -> None:
     """Test calculation of sector KPIs."""
     # Create sample data
     data = {
@@ -39,8 +40,10 @@ def test_calculate_sector_kpis():
     kpis = calculate_sector_kpis(df)
 
     # Check results
-    assert len(kpis) == 1  # Only one sector
-    assert kpis["Sector"].iloc[0] == "Technology"
-    assert kpis["avg_market_cap"].iloc[0] == 1766666666666.6667
-    assert kpis["median_market_cap"].iloc[0] == 1800000000000
-    assert kpis["company_count"].iloc[0] == 3
+    assert "sectors" in kpis
+    assert len(kpis["sectors"]) == 1  # Only one sector
+    sector_data = kpis["sectors"][0]
+    assert sector_data["sector"] == "Technology"
+    assert sector_data["avg_market_cap"] == 1766666666666.6667
+    assert sector_data["median_market_cap"] == 1800000000000
+    assert sector_data["company_count"] == 3

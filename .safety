@@ -1,0 +1,12 @@
+# Safety configuration file
+# See: https://pyup.io/docs/safety/
+
+# Ignore specific vulnerabilities (use with caution)
+# ignore:
+#   - 12345  # Example vulnerability ID
+
+# Set minimum severity level
+# severity: HIGH
+
+# Output format
+output: json 
