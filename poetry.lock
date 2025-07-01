@@ -2574,4 +2574,4 @@ dev = ["flake8", "pytest", "pytest-cov"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9"
-content-hash = "83d6ddea6a3720140026a7112907f42ed6a48ba5944f2cd07e8102e8d330796d"
+content-hash = "b3f14267dc9dbf31ff4da52c14a1087b6ad578e8e92526c77c07c0a5d62d814f"
