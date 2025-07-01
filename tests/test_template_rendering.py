@@ -5,7 +5,7 @@ import pathlib
 
 import pytest
 
-from src.csv_report.report.render import render_html_from_data
+from csv_report.report.render import render_html_from_data
 
 
 def test_template_rendering_with_dummy_data() -> None:
@@ -95,8 +95,6 @@ def test_template_rendering_error_handling() -> None:
 
 if __name__ == "__main__":
     # Run tests directly
-
     test_template_rendering_with_dummy_data()
     test_template_rendering_with_minimal_data()
     test_template_rendering_error_handling()
-

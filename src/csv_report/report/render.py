@@ -35,7 +35,6 @@ def render_html_from_data(data: dict) -> str:
     return p.transform()
 
 
-
 def render(report_date: str) -> None:
     """Render the HTML report with data from dummy.json."""
     # Load data from dummy.json (located in project root data/ directory)
@@ -66,7 +65,6 @@ def render(report_date: str) -> None:
     output_dir.mkdir(exist_ok=True)
     out = output_dir / "report_output.html"
     out.write_text(html, encoding="utf-8")
-
 
 
 if __name__ == "__main__":

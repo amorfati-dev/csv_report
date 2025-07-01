@@ -4,7 +4,7 @@ This module provides comprehensive KPI calculation functions for analyzing
 CSV data, particularly focused on S&P 500 companies data.
 """
 
-from typing import Any
+from typing import Any, Dict
 
 import pandas as pd
 
@@ -27,7 +27,7 @@ def compute_kpis(df: pd.DataFrame) -> dict:
     }
 
 
-def calculate_base_kpis(df: pd.DataFrame) -> dict[str, Any]:
+def calculate_base_kpis(df: pd.DataFrame) -> Dict[str, Any]:
     """Calculate base KPIs for the entire dataset.
 
     Args:
@@ -55,13 +55,15 @@ def calculate_sector_kpis(df: pd.DataFrame) -> dict[str, Any]:
 
     Returns:
         Dictionary with sector statistics containing:
-        - sectors: List of sector data with avg_market_cap, median_market_cap, company_count
+        - sectors: List of sector data with avg_market_cap, median_market_cap,
+        company_count
 
     """
     sector_stats = df.groupby("Sector").agg({"Marketcap": ["mean", "median", "count"]})
 
     # Flatten column names
     sector_stats.columns = ["avg_market_cap", "median_market_cap", "company_count"]
+
     sector_stats = sector_stats.reset_index()
 
     # Convert to list of dictionaries for JSON serialization
@@ -79,7 +81,7 @@ def calculate_sector_kpis(df: pd.DataFrame) -> dict[str, Any]:
     return {"sectors": sectors}
 
 
-def calculate_enhanced_kpis(df: pd.DataFrame) -> dict[str, Any]:
+def calculate_enhanced_kpis(df: pd.DataFrame) -> Dict[str, Any]:
     """Calculate enhanced KPIs including top companies, market cap distribution, and
     percentiles.
 
@@ -197,7 +199,7 @@ def calculate_enhanced_kpis(df: pd.DataFrame) -> dict[str, Any]:
     }
 
 
-def compute_all_kpis(df: pd.DataFrame) -> dict[str, Any]:
+def compute_all_kpis(df: pd.DataFrame) -> Dict[str, Any]:
     """Compute all KPIs and return them in a structured format.
 
     Args:

@@ -21,7 +21,6 @@ def create_database():
     # Create all tables
     SQLModel.metadata.create_all(engine)
 
-
     return engine
 
 
@@ -52,7 +51,6 @@ def test_database_connection() -> None:
         session.add(test_kpi)
         session.commit()
 
-
         # Clean up test data
         session.delete(test_kpi)
         session.delete(test_run)
@@ -62,13 +60,11 @@ def test_database_connection() -> None:
 def main() -> None:
     """Main function to initialize the database."""
     try:
-
         # Create database and tables
         create_database()
 
         # Test the connection
         test_database_connection()
-
 
     except Exception:
         raise

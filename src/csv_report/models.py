@@ -9,6 +9,8 @@ from sqlmodel import Field, SQLModel
 class Run(SQLModel, table=True):
     """Model representing a CSV report generation run."""
 
+    __table_args__ = {"extend_existing": True}
+
     id: Optional[int] = Field(default=None, primary_key=True)
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     csv_file: str = Field(description="Path to the CSV file that was processed")
@@ -36,9 +38,12 @@ class Run(SQLModel, table=True):
 class Kpi(SQLModel, table=True):
     """Model representing KPIs calculated from CSV data."""
 
+    __table_args__ = {"extend_existing": True}
+
     id: Optional[int] = Field(default=None, primary_key=True)
     run_id: int = Field(
-        foreign_key="run.id", description="Reference to the run that generated this KPI",
+        foreign_key="run.id",
+        description="Reference to the run that generated this KPI",
     )
     name: str = Field(description="Name of the KPI")
     value: float = Field(description="Calculated value of the KPI")

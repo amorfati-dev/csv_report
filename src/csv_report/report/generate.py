@@ -65,7 +65,6 @@ def generate_report(df: pd.DataFrame) -> str:
     )
 
 
-
 def save_report(report: str, output_file: Path | None = None) -> Path:
     """Save a report to a file.
 

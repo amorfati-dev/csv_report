@@ -181,7 +181,8 @@ def generate(
             with db_service.engine.begin() as conn:
                 conn.execute(
                     text(
-                        "UPDATE run SET status = 'failed', error_message = :error WHERE id = :id",
+                        "UPDATE run SET status = 'failed', "
+                        "error_message = :error WHERE id = :id",
                     ),
                     {"error": str(e), "id": run.id},
                 )

@@ -34,8 +34,8 @@ The S&P 500 index contains **{{ base_kpis.total_companies }}** companies with a 
 
 | Rank | Symbol | Company | Market Cap (Billions) | Sector |
 |------|--------|---------|----------------------|---------|
-{% for idx, row in enhanced_kpis.top_companies.iterrows() %}
-| {{ idx + 1 }} | **{{ row.Symbol }}** | {{ row.Shortname }} | ${{ "{:,.1f}".format(row.Marketcap_B) }}B | {{ row.Sector }} |
+{% for company in enhanced_kpis.top_companies %}
+| {{ loop.index }} | **{{ company.symbol }}** | {{ company.shortname }} | ${{ "{:,.1f}".format(company.marketcap_b) }}B | {{ company.sector }} |
 {% endfor %}
 
 ---
@@ -49,12 +49,12 @@ The S&P 500 index contains **{{ base_kpis.total_companies }}** companies with a 
 - **Small Cap** (<$2B): {{ enhanced_kpis.market_cap_distribution.small_cap_count }} companies ({{ "{:.1f}".format(enhanced_kpis.market_cap_distribution.small_cap_pct) }}%)
 
 ### Market Cap Percentiles
-- **25th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles[0.25]) }}
-- **50th Percentile (Median)**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles[0.5]) }}
-- **75th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles[0.75]) }}
-- **90th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles[0.9]) }}
-- **95th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles[0.95]) }}
-- **99th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles[0.99]) }}
+- **25th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles.p25) }}
+- **50th Percentile (Median)**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles.p50) }}
+- **75th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles.p75) }}
+- **90th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles.p90) }}
+- **95th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles.p95) }}
+- **99th Percentile**: ${{ "{:,.0f}".format(enhanced_kpis.percentiles.p99) }}
 
 ---
 
@@ -63,8 +63,8 @@ The S&P 500 index contains **{{ base_kpis.total_companies }}** companies with a 
 ### Top 5 Sectors by Total Market Cap
 | Rank | Sector | Total Market Cap | Companies | Avg Market Cap |
 |------|--------|------------------|-----------|----------------|
-{% for idx, row in enhanced_kpis.top_sectors_by_market_cap.iterrows() %}
-| {{ idx + 1 }} | **{{ row.Sector }}** | ${{ "{:,.0f}".format(row.total_market_cap) }} | {{ row.company_count }} | ${{ "{:,.0f}".format(row.avg_market_cap) }} |
+{% for sector in enhanced_kpis.top_sectors_by_market_cap %}
+| {{ loop.index }} | **{{ sector.sector }}** | ${{ "{:,.0f}".format(sector.total_market_cap) }} | {{ sector.company_count }} | ${{ "{:,.0f}".format(sector.avg_market_cap) }} |
 {% endfor %}
 
 ### Complete Sector Breakdown
@@ -100,8 +100,8 @@ The S&P 500 index contains **{{ base_kpis.total_companies }}** companies with a 
 
 | Rank | Sector | Avg Market Cap | Companies | Total Market Cap |
 |------|--------|----------------|-----------|------------------|
-{% for idx, row in enhanced_kpis.sector_rankings.iterrows() %}
-| {{ idx + 1 }} | **{{ row.Sector }}** | ${{ "{:,.0f}".format(row.avg_market_cap) }} | {{ row.company_count }} | ${{ "{:,.0f}".format(row.total_market_cap) }} |
+{% for sector in enhanced_kpis.sector_rankings %}
+| {{ loop.index }} | **{{ sector.sector }}** | ${{ "{:,.0f}".format(sector.avg_market_cap) }} | {{ sector.company_count }} | ${{ "{:,.0f}".format(sector.total_market_cap) }} |
 {% endfor %}
 
 ---
