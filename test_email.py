@@ -14,7 +14,8 @@ def test_email() -> None:
     sender_email = os.getenv("EMAIL_USER")
     app_password = os.getenv("EMAIL_PASSWORD")
     recipient_email = os.getenv(
-        "RECIPIENT_EMAIL", sender_email,
+        "RECIPIENT_EMAIL",
+        sender_email,
     )  # Default to sender if not specified
 
     if not all([sender_email, app_password]):
@@ -37,7 +38,9 @@ def test_email() -> None:
 
     with contextlib.suppress(Exception):
         email_sender.send_email(
-            recipient_email=recipient_email, subject=subject, body=body,
+            recipient_email=recipient_email,
+            subject=subject,
+            body=body,
         )
 
 

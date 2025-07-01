@@ -36,7 +36,6 @@ def test_html_template():
     with open(output_file, "w", encoding="utf-8") as f:
         f.write(html_output)
 
-
     return output_file
 
 

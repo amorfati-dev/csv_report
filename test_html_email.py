@@ -33,7 +33,6 @@ def test_html_rendering() -> Optional[bool]:
         output_file.parent.mkdir(exist_ok=True)
         output_file.write_text(html_content, encoding="utf-8")
 
-
         # Check if CSS was inlined (should contain style attributes)
         if "style=" in html_content:
             pass
