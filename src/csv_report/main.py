@@ -12,6 +12,7 @@ from sqlalchemy import text
 from .database import DatabaseService
 from .load import load_csv
 from .report.generate import generate_report, save_report
+from .logging_config import setup_cli_logging, get_logger, LoggedOperation
 
 # Initialize Typer app and console
 app = typer.Typer(help="Generate reports from CSV files with database tracking")
@@ -40,58 +41,80 @@ def generate(
     ),
 ) -> None:
     """Generate a report from a CSV file and store the run in the database."""
+    # Setup logging
+    logger = setup_cli_logging()
+    logger.info("Starting CSV report generation", extra={
+        'csv_file': csv_file,
+        'output_format': output_format,
+        'output_file': output_file
+    })
+    
     # Validate output format
     if output_format.lower() not in ["markdown", "html"]:
+        logger.error(f"Invalid output format: {output_format}")
         typer.echo(
             f"❌ Invalid output format: {output_format}. Use 'markdown' or 'html'",
         )
         raise typer.Exit(1)
 
     # Initialize database service
+    logger.debug("Initializing database service")
     db_service = DatabaseService()
 
     try:
-        with console.status("[bold green]Loading CSV data..."):
-            df = load_csv(csv_file=csv_file)
+        with LoggedOperation(logger, "CSV loading"):
+            with console.status("[bold green]Loading CSV data..."):
+                df = load_csv(csv_file=csv_file)
+            logger.info(f"CSV loaded successfully: {len(df)} rows, {len(df.columns)} columns")
 
         # Create run record in database
+        logger.debug("Creating run record in database")
         run = db_service.create_run(
             csv_file=csv_file or "default",
             output_format=output_format.lower(),
             rows_processed=len(df),
             status="processing",
         )
+        logger.info(f"Run record created with ID: {run.id}")
 
         console.print(f"📊 Processing {len(df)} rows...")
 
-        with console.status("[bold green]Generating report..."):
-            # Generate report
-            report = generate_report(df)
+        with LoggedOperation(logger, "Report generation"):
+            with console.status("[bold green]Generating report..."):
+                # Generate report
+                logger.debug("Generating report content")
+                report = generate_report(df)
 
-            # Determine output file path
-            if output_file:
-                output_path = Path(output_file)
-            else:
-                output_path = Path(f"reports/sp500_analysis.{output_format.lower()}")
+                # Determine output file path
+                if output_file:
+                    output_path = Path(output_file)
+                else:
+                    output_path = Path(f"reports/sp500_analysis.{output_format.lower()}")
 
-            # Ensure reports directory exists
-            output_path.parent.mkdir(parents=True, exist_ok=True)
+                # Ensure reports directory exists
+                output_path.parent.mkdir(parents=True, exist_ok=True)
 
-            # Save report
-            final_path = save_report(report, output_path)
+                # Save report
+                logger.debug(f"Saving report to: {output_path}")
+                final_path = save_report(report, output_path)
+                logger.info(f"Report saved successfully: {final_path}")
 
         # Calculate and save KPIs to database
-        with console.status("[bold green]Calculating and saving KPIs..."):
-            import sys
+        with LoggedOperation(logger, "KPI calculation"):
+            with console.status("[bold green]Calculating and saving KPIs..."):
+                import sys
 
-            # Add kpi_service to path and import
-            sys.path.append(str(Path(__file__).parent.parent))
-            from kpi_service.kpi import compute_all_kpis
+                # Add kpi_service to path and import
+                sys.path.append(str(Path(__file__).parent.parent))
+                from kpi_service.kpi import compute_all_kpis
 
-            # Compute all KPIs
-            all_kpis = compute_all_kpis(df)
+                # Compute all KPIs
+                logger.debug("Computing all KPIs")
+                all_kpis = compute_all_kpis(df)
+                logger.info(f"KPIs computed successfully: {len(all_kpis)} categories")
 
             # Save base KPIs
+            logger.debug("Saving base KPIs to database")
             base_kpis = all_kpis["base_kpis"]
             db_service.add_kpi(
                 run_id=run.id,
@@ -166,6 +189,7 @@ def generate(
             )
 
         # Update run status to completed
+        logger.debug("Updating run status to completed")
         run.status = "completed"
         with db_service.engine.begin() as conn:
             conn.execute(
@@ -173,12 +197,20 @@ def generate(
                 {"id": run.id},
             )
 
+        logger.info("Report generation completed successfully", extra={
+            'run_id': run.id,
+            'output_file': str(final_path),
+            'rows_processed': len(df)
+        })
         console.print(f"✅ Report generated and saved to: {final_path}")
         console.print(f"📊 Run recorded in database with ID: {run.id}")
 
     except Exception as e:
+        logger.error(f"Report generation failed: {str(e)}", exc_info=True)
+        
         # Update run status to failed
         if "run" in locals():
+            logger.debug(f"Updating run {run.id} status to failed")
             run.status = "failed"
             run.error_message = str(e)
             with db_service.engine.begin() as conn:
