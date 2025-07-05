@@ -15,6 +15,7 @@ from typing import Optional
 def setup_logging(
     log_level: str = "INFO",
     log_file: Optional[str] = None,
+    *,
     log_to_console: bool = True,
     component: str = "csv_report",
 ) -> logging.Logger:
@@ -132,16 +133,9 @@ def setup_api_logging(log_level: str = "INFO") -> logging.Logger:
     )
 
 
-def log_function_call(logger: logging.Logger, func_name: str, **kwargs):
-    """Log function call with parameters.
-
-    Args:
-        logger: Logger instance
-        func_name: Name of the function being called
-        **kwargs: Function parameters to log
-
-    """
-    logger.debug(f"Calling {func_name} with parameters: {kwargs}")
+def log_function_call(logger: logging.Logger, func_name: str, **kwargs: object) -> None:
+    """Log function call with parameters."""
+    logger.debug("Calling %s with parameters: %s", func_name, kwargs)
 
 
 def log_function_result(
@@ -176,19 +170,25 @@ class LoggedOperation:
         self.operation_name = operation_name
         self.start_time = None
 
-    def __enter__(self):
+    def __enter__(self) -> "LoggedOperation":
+        """Enter the context manager."""
         self.start_time = time.time()
-        self.logger.info(f"Starting operation: {self.operation_name}")
+        self.logger.info("Starting operation: %s", self.operation_name)
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        """Exit the context manager."""
         duration = time.time() - self.start_time
         if exc_type is None:
             self.logger.info(
-                f"Operation {self.operation_name} completed in {duration:.2f}s"
+                "Operation %s completed in %.2fs",
+                self.operation_name,
+                duration,
             )
         else:
             self.logger.error(
-                f"Operation {self.operation_name} failed after "
-                f"{duration:.2f}s: {exc_val}"
+                "Operation %s failed after %.2fs: %s",
+                self.operation_name,
+                duration,
+                exc_val,
             )

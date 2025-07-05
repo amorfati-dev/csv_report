@@ -9,6 +9,7 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 # Add the csv_report module to the path
 sys.path.append(str(Path(__file__).parent.parent))
 from csv_report.database import DatabaseService
+
 from .kpi import compute_all_kpis, compute_kpis
 
 app = FastAPI(title="CSV-KPI-Service")

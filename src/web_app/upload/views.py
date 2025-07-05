@@ -15,6 +15,7 @@ sys.path.append(str(Path(__file__).parent.parent.parent))
 from csv_report.load import load_csv
 from csv_report.logging_config import setup_cli_logging
 from csv_report.report.generate import generate_report, save_report
+
 from .models import Run
 
 # Setup logging
@@ -34,7 +35,7 @@ def process_csv(request):
         return JsonResponse({"error": "Please upload a CSV file"}, status=400)
 
     uploaded_file = request.FILES["csv_file"]
-    logger.info(f"Processing uploaded CSV file: {uploaded_file.name}")
+    logger.info("Processing uploaded CSV file: %s", uploaded_file.name)
 
     # Save uploaded file temporarily
     with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as temp_file:
@@ -46,7 +47,9 @@ def process_csv(request):
         # Load CSV
         df = load_csv(csv_file=temp_file_path)
         logger.info(
-            f"CSV loaded successfully: {len(df)} rows, {len(df.columns)} columns",
+            "CSV loaded successfully: %d rows, %d columns",
+            len(df),
+            len(df.columns),
         )
 
         # Create run record
@@ -55,7 +58,7 @@ def process_csv(request):
             output_format="html",
             status="processing",
         )
-        logger.info(f"Run record created with ID: {run.id}")
+        logger.info("Run record created with ID: %d", run.id)
 
         # Generate report
         logger.info("Generating report")
@@ -65,7 +68,7 @@ def process_csv(request):
         output_path = Path("reports") / f"report_{run.id}.html"
         output_path.parent.mkdir(exist_ok=True)
         final_path = save_report(report, output_path)
-        logger.info(f"Report saved: {final_path}")
+        logger.info("Report saved: %s", final_path)
 
         # Update run status using Django ORM
         run.status = "completed"
@@ -82,7 +85,7 @@ def process_csv(request):
         )
 
     except Exception as e:
-        logger.exception(f"Error processing CSV: {e!s}")
+        logger.exception("Error processing CSV")
         return JsonResponse({"error": f"Error processing CSV: {e!s}"}, status=500)
 
     finally:

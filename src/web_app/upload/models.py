@@ -19,7 +19,8 @@ class Run(models.Model):
         db_table = "run"
         managed = False  # Django doesn't manage this table
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """Return string representation of the Run model."""
         return f"Run {self.id} - {self.csv_file} ({self.status})"
 
 
@@ -39,5 +40,6 @@ class KPI(models.Model):
         db_table = "kpi"
         managed = False  # Django doesn't manage this table
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """Return string representation of the KPI model."""
         return f"KPI {self.name}: {self.value} ({self.category})"
