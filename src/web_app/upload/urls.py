@@ -1,8 +1,7 @@
-"""
-URL configuration for upload app.
-"""
+"""URL configuration for upload app."""
 
 from django.urls import path
+
 from . import views
 
 app_name = "upload"

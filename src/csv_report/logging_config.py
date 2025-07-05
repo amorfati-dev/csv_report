@@ -1,12 +1,10 @@
-"""
-Logging configuration for csv_report tool.
+"""Logging configuration for csv_report tool.
 
 This module provides structured logging configuration for both CLI and FastAPI components.
 """
 
 import logging
 import logging.handlers
-import os
 import sys
 import time
 from pathlib import Path
@@ -19,8 +17,7 @@ def setup_logging(
     log_to_console: bool = True,
     component: str = "csv_report",
 ) -> logging.Logger:
-    """
-    Setup logging configuration for the csv_report tool.
+    """Setup logging configuration for the csv_report tool.
 
     Args:
         log_level: Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
@@ -30,6 +27,7 @@ def setup_logging(
 
     Returns:
         Configured logger instance
+
     """
     # Create logs directory if it doesn't exist
     if log_file:
@@ -59,7 +57,7 @@ def setup_logging(
     # File handler with rotation
     if log_file:
         file_handler = logging.handlers.RotatingFileHandler(
-            log_file, maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8"  # 10MB
+            log_file, maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8",  # 10MB
         )
         file_handler.setLevel(getattr(logging, log_level.upper()))
         file_handler.setFormatter(formatter)
@@ -69,27 +67,27 @@ def setup_logging(
 
 
 def get_logger(name: str = "csv_report") -> logging.Logger:
-    """
-    Get a logger instance with the specified name.
+    """Get a logger instance with the specified name.
 
     Args:
         name: Logger name (usually __name__)
 
     Returns:
         Logger instance
+
     """
     return logging.getLogger(name)
 
 
 def setup_cli_logging(log_level: str = "INFO") -> logging.Logger:
-    """
-    Setup logging specifically for CLI operations.
+    """Setup logging specifically for CLI operations.
 
     Args:
         log_level: Logging level
 
     Returns:
         Configured CLI logger
+
     """
     # Determine log file path
     log_dir = Path("logs")
@@ -105,14 +103,14 @@ def setup_cli_logging(log_level: str = "INFO") -> logging.Logger:
 
 
 def setup_api_logging(log_level: str = "INFO") -> logging.Logger:
-    """
-    Setup logging specifically for FastAPI operations.
+    """Setup logging specifically for FastAPI operations.
 
     Args:
         log_level: Logging level
 
     Returns:
         Configured API logger
+
     """
     # Determine log file path
     log_dir = Path("logs")
@@ -128,28 +126,28 @@ def setup_api_logging(log_level: str = "INFO") -> logging.Logger:
 
 
 def log_function_call(logger: logging.Logger, func_name: str, **kwargs):
-    """
-    Log function call with parameters.
+    """Log function call with parameters.
 
     Args:
         logger: Logger instance
         func_name: Name of the function being called
         **kwargs: Function parameters to log
+
     """
     logger.debug(f"Calling {func_name} with parameters: {kwargs}")
 
 
 def log_function_result(
-    logger: logging.Logger, func_name: str, result=None, duration: float = None
+    logger: logging.Logger, func_name: str, result=None, duration: Optional[float] = None,
 ):
-    """
-    Log function result and duration.
+    """Log function result and duration.
 
     Args:
         logger: Logger instance
         func_name: Name of the function
         result: Function result (optional)
         duration: Execution time in seconds (optional)
+
     """
     message = f"Function {func_name} completed"
     if duration is not None:
@@ -163,7 +161,7 @@ def log_function_result(
 class LoggedOperation:
     """Context manager for logging operation timing."""
 
-    def __init__(self, logger: logging.Logger, operation_name: str):
+    def __init__(self, logger: logging.Logger, operation_name: str) -> None:
         self.logger = logger
         self.operation_name = operation_name
         self.start_time = None
@@ -177,9 +175,9 @@ class LoggedOperation:
         duration = time.time() - self.start_time
         if exc_type is None:
             self.logger.info(
-                f"Operation {self.operation_name} completed in {duration:.2f}s"
+                f"Operation {self.operation_name} completed in {duration:.2f}s",
             )
         else:
             self.logger.error(
-                f"Operation {self.operation_name} failed after {duration:.2f}s: {exc_val}"
+                f"Operation {self.operation_name} failed after {duration:.2f}s: {exc_val}",
             )

@@ -11,8 +11,8 @@ from sqlalchemy import text
 
 from .database import DatabaseService
 from .load import load_csv
+from .logging_config import LoggedOperation, setup_cli_logging
 from .report.generate import generate_report, save_report
-from .logging_config import setup_cli_logging, get_logger, LoggedOperation
 
 # Initialize Typer app and console
 app = typer.Typer(help="Generate reports from CSV files with database tracking")
@@ -73,7 +73,7 @@ def generate(
             with console.status("[bold green]Loading CSV data..."):
                 df = load_csv(csv_file=csv_file)
             logger.info(
-                f"CSV loaded successfully: {len(df)} rows, {len(df.columns)} columns"
+                f"CSV loaded successfully: {len(df)} rows, {len(df.columns)} columns",
             )
 
         # Create run record in database
@@ -99,7 +99,7 @@ def generate(
                     output_path = Path(output_file)
                 else:
                     output_path = Path(
-                        f"reports/sp500_analysis.{output_format.lower()}"
+                        f"reports/sp500_analysis.{output_format.lower()}",
                     )
 
                 # Ensure reports directory exists
@@ -208,7 +208,7 @@ def generate(
         with db_service.engine.begin() as conn:
             conn.execute(
                 text(
-                    "UPDATE run SET status = 'completed', duration = :duration WHERE id = :id"
+                    "UPDATE run SET status = 'completed', duration = :duration WHERE id = :id",
                 ),
                 {"id": run.id, "duration": duration},
             )
@@ -232,13 +232,13 @@ def generate(
         if durations:
             avg_duration = sum(durations) / len(durations)
             console.print(
-                f"📊 Average duration of last 5 runs: {avg_duration:.2f} seconds"
+                f"📊 Average duration of last 5 runs: {avg_duration:.2f} seconds",
             )
         else:
             console.print("📊 No duration data available for last 5 runs.")
 
     except Exception as e:
-        logger.error(f"Report generation failed: {str(e)}", exc_info=True)
+        logger.error(f"Report generation failed: {e!s}", exc_info=True)
 
         # Update run status to failed
         if "run" in locals():

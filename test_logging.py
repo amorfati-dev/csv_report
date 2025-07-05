@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Test script to demonstrate the logging functionality.
-"""
+"""Test script to demonstrate the logging functionality."""
 
 import sys
 from pathlib import Path
@@ -9,13 +7,13 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from csv_report.logging_config import setup_cli_logging, get_logger, LoggedOperation
 import time
+
+from csv_report.logging_config import LoggedOperation, setup_cli_logging
 
 
 def test_logging():
     """Test the logging functionality."""
-
     # Setup logging
     logger = setup_cli_logging(log_level="DEBUG")
 
