@@ -75,19 +75,21 @@ def test_generate_command_with_options(runner) -> None:
 
 
 def test_show_runs_no_runs(runner) -> None:
-    """Test show-runs when no runs exist."""
+    """Test show-runs when runs exist."""
     result = runner.invoke(app, ["show-runs"])
     assert result.exit_code == 0
-    # Check that it shows a table or some output (not necessarily "No runs found")
-    assert "Recent Runs" in result.stdout or "ID" in result.stdout
+    # Check for table headers since runs exist
+    assert "Recent Runs" in result.stdout
+    assert "ID" in result.stdout
 
 
 def test_show_runs_with_limit(runner) -> None:
     """Test show-runs with limit option."""
     result = runner.invoke(app, ["show-runs", "--limit", "5"])
     assert result.exit_code == 0
-    # Check that it shows output (not necessarily "No runs found")
-    assert "Recent Runs" in result.stdout or "ID" in result.stdout
+    # Check for table headers since runs exist
+    assert "Recent Runs" in result.stdout
+    assert "ID" in result.stdout
 
 
 def test_database_service_creation() -> None:
