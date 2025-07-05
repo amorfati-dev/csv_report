@@ -34,7 +34,7 @@ where = ["src"]
 [tool.poetry.group.dev.dependencies]
 pytest-cov = "^6.2.1"
 black = "^25.1.0"
-ruff = "^0.11.13"
+ruff = "^0.12.2"
 bandit = "^1.7.5"
 safety = "^2.3.5"
 pre-commit = "^3.6.0"
