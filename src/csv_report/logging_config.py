@@ -1,6 +1,7 @@
 """Logging configuration for csv_report tool.
 
-This module provides structured logging configuration for both CLI and FastAPI components.
+This module provides structured logging configuration for both CLI and FastAPI
+components.
 """
 
 import logging
@@ -43,7 +44,10 @@ def setup_logging(
 
     # Create formatter
     formatter = logging.Formatter(
-        fmt="%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s",
+        fmt=(
+            "%(asctime)s - %(name)s - %(levelname)s - "
+            "%(funcName)s:%(lineno)d - %(message)s"
+        ),
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
@@ -57,7 +61,10 @@ def setup_logging(
     # File handler with rotation
     if log_file:
         file_handler = logging.handlers.RotatingFileHandler(
-            log_file, maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8",  # 10MB
+            log_file,
+            maxBytes=10 * 1024 * 1024,  # 10MB
+            backupCount=5,
+            encoding="utf-8",
         )
         file_handler.setLevel(getattr(logging, log_level.upper()))
         file_handler.setFormatter(formatter)
@@ -138,7 +145,10 @@ def log_function_call(logger: logging.Logger, func_name: str, **kwargs):
 
 
 def log_function_result(
-    logger: logging.Logger, func_name: str, result=None, duration: Optional[float] = None,
+    logger: logging.Logger,
+    func_name: str,
+    result=None,
+    duration: Optional[float] = None,
 ):
     """Log function result and duration.
 
@@ -175,9 +185,10 @@ class LoggedOperation:
         duration = time.time() - self.start_time
         if exc_type is None:
             self.logger.info(
-                f"Operation {self.operation_name} completed in {duration:.2f}s",
+                f"Operation {self.operation_name} completed in {duration:.2f}s"
             )
         else:
             self.logger.error(
-                f"Operation {self.operation_name} failed after {duration:.2f}s: {exc_val}",
+                f"Operation {self.operation_name} failed after "
+                f"{duration:.2f}s: {exc_val}"
             )

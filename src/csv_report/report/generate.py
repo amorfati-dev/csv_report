@@ -13,12 +13,12 @@ from typing import TYPE_CHECKING
 
 from jinja2 import Environment, FileSystemLoader
 
+if TYPE_CHECKING:
+    import pandas as pd
+
 # Add kpi_service to path and import
 sys.path.append(str(Path(__file__).parent.parent.parent))
 from kpi_service.kpi import calculate_base_kpis, calculate_enhanced_kpis
-
-if TYPE_CHECKING:
-    import pandas as pd
 
 __all__ = ["generate_report", "save_report"]
 

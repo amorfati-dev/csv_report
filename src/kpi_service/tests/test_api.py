@@ -6,7 +6,6 @@ from fastapi.testclient import TestClient
 
 # Add the src directory to the path
 sys.path.append(str(Path(__file__).parent.parent.parent))
-
 from kpi_service.app import app
 
 client = TestClient(app)

@@ -12,11 +12,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
-
 from csv_report.load import load_csv
 from csv_report.logging_config import setup_cli_logging
 from csv_report.report.generate import generate_report, save_report
-
 from .models import Run
 
 # Setup logging

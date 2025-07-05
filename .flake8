@@ -1,4 +1,12 @@
 [flake8]
 max-line-length = 88
-extend-ignore = E203,E402
-exclude = .git,__pycache__,build,dist
+extend-ignore = E203, W503, E402
+exclude = 
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    src/csv_report.egg-info,
+    src/web_app/logs,
+    logs,
+    *.egg-info

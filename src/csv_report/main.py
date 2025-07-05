@@ -208,7 +208,8 @@ def generate(
         with db_service.engine.begin() as conn:
             conn.execute(
                 text(
-                    "UPDATE run SET status = 'completed', duration = :duration WHERE id = :id",
+                    "UPDATE run SET status = 'completed', "
+                    "duration = :duration WHERE id = :id"
                 ),
                 {"id": run.id, "duration": duration},
             )
