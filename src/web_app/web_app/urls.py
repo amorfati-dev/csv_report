@@ -26,4 +26,7 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-    urlpatterns += static('/reports/', document_root=settings.BASE_DIR.parent.parent.parent.parent / 'reports')
+    urlpatterns += static(
+        "/reports/",
+        document_root=settings.BASE_DIR.parent.parent.parent.parent / "reports",
+    )
