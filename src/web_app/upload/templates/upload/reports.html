@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Reports - CSV Report Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-align: center;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            text-align: center;
+        }
+        
+        .nav-links {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .nav-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 10px;
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            background-color: #667eea;
+            color: white;
+        }
+        
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .report-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .report-id {
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .report-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-processing {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .report-info {
+            margin-bottom: 15px;
+        }
+        
+        .report-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+        
+        .report-info strong {
+            color: #333;
+        }
+        
+        .report-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .no-reports {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .no-reports h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 CSV Reports</h1>
+        <p class="subtitle">View all generated reports and their status</p>
+        
+        <div class="nav-links">
+            <a href="{% url 'upload:upload' %}">Upload New CSV</a>
+        </div>
+        
+        {% if runs %}
+            <div class="reports-grid">
+                {% for run in runs %}
+                <div class="report-card">
+                    <div class="report-header">
+                        <span class="report-id">#{{ run.id }}</span>
+                        <span class="report-status status-{{ run.status }}">{{ run.status|title }}</span>
+                    </div>
+                    
+                    <div class="report-info">
+                        <p><strong>File:</strong> {{ run.csv_file }}</p>
+                        <p><strong>Format:</strong> {{ run.output_format|upper }}</p>
+                        <p><strong>Rows:</strong> {{ run.rows_processed }}</p>
+                        <p><strong>Date:</strong> {{ run.timestamp|date:"M d, Y H:i" }}</p>
+                        {% if run.error_message %}
+                            <p><strong>Error:</strong> {{ run.error_message }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="report-actions">
+                        {% if run.status == 'completed' %}
+                            <a href="{{ run.report_url }}" class="btn" target="_blank">View Report</a>
+                        {% endif %}
+                        <button class="btn btn-secondary" onclick="viewDetails({{ run.id }})">Details</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-reports">
+                <h3>No reports yet</h3>
+                <p>Upload your first CSV file to generate a report!</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function viewDetails(runId) {
+            alert('Details for run ' + runId + ' - This feature will be implemented soon!');
+        }
+    </script>
+</body>
+</html> 

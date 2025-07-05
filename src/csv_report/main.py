@@ -49,6 +49,9 @@ def generate(
         'output_file': output_file
     })
     
+    import time
+    start_time = time.time()
+
     # Validate output format
     if output_format.lower() not in ["markdown", "html"]:
         logger.error(f"Invalid output format: {output_format}")
@@ -191,19 +194,33 @@ def generate(
         # Update run status to completed
         logger.debug("Updating run status to completed")
         run.status = "completed"
+        # Calculate and store duration
+        duration = time.time() - start_time
+        run.duration = duration
         with db_service.engine.begin() as conn:
             conn.execute(
-                text("UPDATE run SET status = 'completed' WHERE id = :id"),
-                {"id": run.id},
+                text("UPDATE run SET status = 'completed', duration = :duration WHERE id = :id"),
+                {"id": run.id, "duration": duration},
             )
 
         logger.info("Report generation completed successfully", extra={
             'run_id': run.id,
             'output_file': str(final_path),
-            'rows_processed': len(df)
+            'rows_processed': len(df),
+            'duration': duration
         })
         console.print(f"✅ Report generated and saved to: {final_path}")
         console.print(f"📊 Run recorded in database with ID: {run.id}")
+        console.print(f"⏱️ Duration: {duration:.2f} seconds")
+
+        # Calculate and display average duration of last 5 runs
+        last_5_runs = db_service.get_recent_runs(5)
+        durations = [r.duration for r in last_5_runs if r.duration is not None]
+        if durations:
+            avg_duration = sum(durations) / len(durations)
+            console.print(f"📊 Average duration of last 5 runs: {avg_duration:.2f} seconds")
+        else:
+            console.print("📊 No duration data available for last 5 runs.")
 
     except Exception as e:
         logger.error(f"Report generation failed: {str(e)}", exc_info=True)

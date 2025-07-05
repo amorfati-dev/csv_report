@@ -9,7 +9,11 @@ from .models import Kpi, Run
 
 def get_database_url() -> str:
     """Get the database URL, defaulting to SQLite."""
-    db_path = Path("run.db")
+    # Use absolute path to ensure we find the correct run.db
+    # Go up from src/csv_report/db_init.py to project root
+    current_file = Path(__file__)
+    project_root = current_file.parent.parent.parent.parent.parent
+    db_path = project_root / "run.db"
     return f"sqlite:///{db_path}"
 
 

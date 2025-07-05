@@ -24,6 +24,10 @@ class Run(SQLModel, table=True):
         default=None,
         description="Error message if failed",
     )
+    duration: Optional[float] = Field(
+        default=None,
+        description="Duration of the run in seconds",
+    )
 
     class Config:
         schema_extra = {
