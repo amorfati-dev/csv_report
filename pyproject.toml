@@ -36,7 +36,7 @@ pytest-cov = "^6.2.1"
 black = "^25.1.0"
 ruff = "^0.11.13"
 bandit = "^1.7.5"
-safety = "^2.3.5"
+safety = "^3.2.13"
 pre-commit = "^3.6.0"
 typer = {extras = ["all"], version = "^0.9.0,<0.10.0"}
 flake8 = "^7.3.0"
