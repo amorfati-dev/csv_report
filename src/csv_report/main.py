@@ -11,8 +11,8 @@ from sqlalchemy import text
 
 from .database import DatabaseService
 from .load import load_csv
+from .logging_config import LoggedOperation, setup_cli_logging
 from .report.generate import generate_report, save_report
-from .logging_config import setup_cli_logging, get_logger, LoggedOperation
 
 # Initialize Typer app and console
 app = typer.Typer(help="Generate reports from CSV files with database tracking")
@@ -43,15 +43,22 @@ def generate(
     """Generate a report from a CSV file and store the run in the database."""
     # Setup logging
     logger = setup_cli_logging()
-    logger.info("Starting CSV report generation", extra={
-        'csv_file': csv_file,
-        'output_format': output_format,
-        'output_file': output_file
-    })
-    
+    logger.info(
+        "Starting CSV report generation",
+        extra={
+            "csv_file": csv_file,
+            "output_format": output_format,
+            "output_file": output_file,
+        },
+    )
+
+    import time
+
+    start_time = time.time()
+
     # Validate output format
     if output_format.lower() not in ["markdown", "html"]:
-        logger.error(f"Invalid output format: {output_format}")
+        logger.error("Invalid output format: %s", output_format)
         typer.echo(
             f"❌ Invalid output format: {output_format}. Use 'markdown' or 'html'",
         )
@@ -65,7 +72,11 @@ def generate(
         with LoggedOperation(logger, "CSV loading"):
             with console.status("[bold green]Loading CSV data..."):
                 df = load_csv(csv_file=csv_file)
-            logger.info(f"CSV loaded successfully: {len(df)} rows, {len(df.columns)} columns")
+            logger.info(
+                "CSV loaded successfully: %d rows, %d columns",
+                len(df),
+                len(df.columns),
+            )
 
         # Create run record in database
         logger.debug("Creating run record in database")
@@ -75,29 +86,35 @@ def generate(
             rows_processed=len(df),
             status="processing",
         )
-        logger.info(f"Run record created with ID: {run.id}")
+        logger.info("Run record created with ID: %d", run.id)
 
         console.print(f"📊 Processing {len(df)} rows...")
 
-        with LoggedOperation(logger, "Report generation"):
-            with console.status("[bold green]Generating report..."):
-                # Generate report
-                logger.debug("Generating report content")
-                report = generate_report(df)
+        with (
+            LoggedOperation(logger, "Report generation"),
+            console.status(
+                "[bold green]Generating report...",
+            ),
+        ):
+            # Generate report
+            logger.debug("Generating report content")
+            report = generate_report(df, output_format=output_format.lower())
 
-                # Determine output file path
-                if output_file:
-                    output_path = Path(output_file)
-                else:
-                    output_path = Path(f"reports/sp500_analysis.{output_format.lower()}")
+            # Determine output file path
+            if output_file:
+                output_path = Path(output_file)
+            else:
+                output_path = Path(
+                    f"reports/sp500_analysis.{output_format.lower()}",
+                )
 
-                # Ensure reports directory exists
-                output_path.parent.mkdir(parents=True, exist_ok=True)
+            # Ensure reports directory exists
+            output_path.parent.mkdir(parents=True, exist_ok=True)
 
-                # Save report
-                logger.debug(f"Saving report to: {output_path}")
-                final_path = save_report(report, output_path)
-                logger.info(f"Report saved successfully: {final_path}")
+            # Save report
+            logger.debug("Saving report to: %s", output_path)
+            final_path = save_report(report, output_path)
+            logger.info("Report saved successfully: %s", final_path)
 
         # Calculate and save KPIs to database
         with LoggedOperation(logger, "KPI calculation"):
@@ -111,7 +128,7 @@ def generate(
                 # Compute all KPIs
                 logger.debug("Computing all KPIs")
                 all_kpis = compute_all_kpis(df)
-                logger.info(f"KPIs computed successfully: {len(all_kpis)} categories")
+                logger.info("KPIs computed successfully: %d categories", len(all_kpis))
 
             # Save base KPIs
             logger.debug("Saving base KPIs to database")
@@ -191,26 +208,48 @@ def generate(
         # Update run status to completed
         logger.debug("Updating run status to completed")
         run.status = "completed"
+        # Calculate and store duration
+        duration = time.time() - start_time
+        run.duration = duration
         with db_service.engine.begin() as conn:
             conn.execute(
-                text("UPDATE run SET status = 'completed' WHERE id = :id"),
-                {"id": run.id},
+                text(
+                    "UPDATE run SET status = 'completed', "
+                    "duration = :duration WHERE id = :id",
+                ),
+                {"id": run.id, "duration": duration},
             )
 
-        logger.info("Report generation completed successfully", extra={
-            'run_id': run.id,
-            'output_file': str(final_path),
-            'rows_processed': len(df)
-        })
+        logger.info(
+            "Report generation completed successfully",
+            extra={
+                "run_id": run.id,
+                "output_file": str(final_path),
+                "rows_processed": len(df),
+                "duration": duration,
+            },
+        )
         console.print(f"✅ Report generated and saved to: {final_path}")
         console.print(f"📊 Run recorded in database with ID: {run.id}")
+        console.print(f"⏱️ Duration: {duration:.2f} seconds")
+
+        # Calculate and display average duration of last 5 runs
+        last_5_runs = db_service.get_recent_runs(5)
+        durations = [r.duration for r in last_5_runs if r.duration is not None]
+        if durations:
+            avg_duration = sum(durations) / len(durations)
+            console.print(
+                f"📊 Average duration of last 5 runs: {avg_duration:.2f} seconds",
+            )
+        else:
+            console.print("📊 No duration data available for last 5 runs.")
 
     except Exception as e:
-        logger.error(f"Report generation failed: {str(e)}", exc_info=True)
-        
+        logger.exception("Report generation failed")
+
         # Update run status to failed
         if "run" in locals():
-            logger.debug(f"Updating run {run.id} status to failed")
+            logger.debug("Updating run %d status to failed", run.id)
             run.status = "failed"
             run.error_message = str(e)
             with db_service.engine.begin() as conn:

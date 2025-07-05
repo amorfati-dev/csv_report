@@ -13,21 +13,22 @@ from typing import TYPE_CHECKING
 
 from jinja2 import Environment, FileSystemLoader
 
+if TYPE_CHECKING:
+    import pandas as pd
+
 # Add kpi_service to path and import
 sys.path.append(str(Path(__file__).parent.parent.parent))
 from kpi_service.kpi import calculate_base_kpis, calculate_enhanced_kpis
 
-if TYPE_CHECKING:
-    import pandas as pd
-
 __all__ = ["generate_report", "save_report"]
 
 
-def generate_report(df: pd.DataFrame) -> str:
+def generate_report(df: pd.DataFrame, output_format: str = "markdown") -> str:
     """Generate a report from the S&P 500 companies data using Jinja2 template.
 
     Args:
         df: DataFrame containing S&P 500 companies data
+        output_format: 'html' or 'markdown'
 
     Returns:
         String containing the formatted report
@@ -54,7 +55,10 @@ def generate_report(df: pd.DataFrame) -> str:
     # Load Jinja2 template
     template_dir = Path(__file__).parent
     env = Environment(loader=FileSystemLoader(template_dir), autoescape=True)
-    template = env.get_template("template.markdown.j2")
+    if output_format == "html":
+        template = env.get_template("report_template.html")
+    else:
+        template = env.get_template("template.markdown.j2")
 
     # Render template with data
     return template.render(
