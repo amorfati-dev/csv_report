@@ -71,7 +71,7 @@ def process_csv(request):
             
             # Generate report
             logger.info("Generating report")
-            report = generate_report(df)
+            report = generate_report(df, output_format="html")
             
             # Save report to the main reports directory
             reports_dir = Path(__file__).parent.parent.parent.parent.parent.parent / "reports"

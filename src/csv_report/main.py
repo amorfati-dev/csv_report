@@ -86,7 +86,7 @@ def generate(
             with console.status("[bold green]Generating report..."):
                 # Generate report
                 logger.debug("Generating report content")
-                report = generate_report(df)
+                report = generate_report(df, output_format=output_format.lower())
 
                 # Determine output file path
                 if output_file:
